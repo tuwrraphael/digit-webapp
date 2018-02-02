@@ -1,3 +1,14 @@
-<a [routerLink]="['/device/12345/log']">Log</a>
-<a [routerLink]="['/']">Home</a>
-<router-outlet></router-outlet>
+<header class="mdc-toolbar mdc-toolbar--fixed">
+  <div class="mdc-toolbar__row">
+    <section class="mdc-toolbar__section mdc-toolbar__section--align-start" role="toolbar">
+      
+      <a [routerLink]="['/']" class="material-icons mdc-toolbar__menu-icon">menu</a>
+      <span class="mdc-toolbar__title">Digit</span>
+    </section>
+    <section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
+      <a class="material-icons mdc-toolbar__icon" aria-label="Watch" [routerLink]="['/device/12345/log']" alt="Watch">watch</a>
+    </section>
+  </div>
+</header>
+<main class="mdc-toolbar-fixed-adjust"><router-outlet></router-outlet></main>
+

@@ -10,8 +10,6 @@ import { environment } from '../environments/environment';
 
 import { DeviceModule } from './device/device.module';
 
-import { MdcToolbarModule } from '@angular-mdc/web';
-
 @NgModule({
   declarations: [
     AppComponent
@@ -20,8 +18,7 @@ import { MdcToolbarModule } from '@angular-mdc/web';
     DeviceModule,
     BrowserModule,
     AppRoutingModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
-    MdcToolbarModule
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'de' } ],
   bootstrap: [AppComponent]

@@ -24,6 +24,8 @@
     "@angular/router": "^5.1.0",
     "@angular/service-worker": "^5.1.0",
     "@aspnet/signalr-client": "^1.0.0-alpha2-final",
+    "@material/toolbar": "^0.29.0",
+    "@material/typography": "^0.28.0",
     "core-js": "^2.4.1",
     "rxjs": "^5.5.6",
     "zone.js": "^0.8.19"
