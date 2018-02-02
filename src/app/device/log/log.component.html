@@ -1,0 +1,21 @@
+<div>
+  <h1>Log</h1>
+  Device Id: {{deviceId}}
+  <button (click)="testLogEntry()">Testeintrag erstellen</button>
+  <table>
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Code</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let entry of log; let i = index">
+        <td>{{entry.occurenceTime | date:'mediumTime'}}</td>
+        <td>{{entry.code }}</td>
+        <td>{{entry.message }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
