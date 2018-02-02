@@ -55,4 +55,10 @@ export class LogComponent implements OnInit, OnDestroy {
       message: "test"
     }).subscribe();
   }
+
+  iconDictionary = { "0": "info", "99": "code", "3": "error", "4": "error", "1" : "done" };
+
+  getIcon(level: number) {
+    return this.iconDictionary[level];
+  }
 }

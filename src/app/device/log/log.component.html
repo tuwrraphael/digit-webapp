@@ -1,21 +1,19 @@
-<div>
-  <h1>Log</h1>
-  Device Id: {{deviceId}}
+<div class="log-container">
+  <h1>Device {{deviceId}}</h1>
+  <h2>Log</h2>
+  <ul class="mdc-list mdc-list--two-line mdc-list--avatar-list">
+    <li class="mdc-list-item log-level-{{entry.code}}-color" *ngFor="let entry of log; let i = index">
+      <span class="mdc-list-item__graphic" role="presentation">
+        <i class="material-icons" aria-hidden="true">{{getIcon(entry.code)}}</i>
+      </span>
+      <span class="mdc-list-item__text">
+        {{entry.message}}
+        <span class="mdc-list-item__secondary-text">Code {{entry.code}}</span>
+      </span>
+      <span title="More info" class="mdc-list-item__meta " aria-label="View more information">
+        {{entry.occurenceTime | date:'mediumTime'}}
+      </span>
+    </li>
+  </ul>
   <button (click)="testLogEntry()">Testeintrag erstellen</button>
-  <table>
-    <thead>
-      <tr>
-        <th>Time</th>
-        <th>Code</th>
-        <th>Message</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let entry of log; let i = index">
-        <td>{{entry.occurenceTime | date:'mediumTime'}}</td>
-        <td>{{entry.code }}</td>
-        <td>{{entry.message }}</td>
-      </tr>
-    </tbody>
-  </table>
 </div>
