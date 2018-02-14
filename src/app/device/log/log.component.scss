@@ -11,7 +11,11 @@
   background-color: #f8d7da;
 }
 
-.log-container{
-  margin:auto;
-  max-width: 60em; 
+.log-container {
+  margin: auto;
+  max-width: 60em;
+}
+
+.mdc-list-item {
+  white-space: normal !important;
 }
