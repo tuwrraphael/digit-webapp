@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  digitServiceUrl: "https://digit-app.azurewebsites.net"
 };

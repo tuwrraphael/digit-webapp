@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Http } from '@angular/http';
+import { environment } from '../../../environments/environment';
 import 'rxjs/add/operator/map';
 
 import { LogEntry } from './log-entry';
@@ -23,7 +24,7 @@ export class LogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.activatedRoute.parent.params.map(p => p.id).subscribe(id => {
       this.deviceId = id;
-      this.http.get(`https://digit-app.azurewebsites.net/api/device/${id}/log`, { params: { history: 15 } }).subscribe(data => {
+      this.http.get(`${environment.digitServiceUrl}/api/device/${id}/log`, { params: { history: 15 } }).subscribe(data => {
         this.log = data.json() || [];
         this.log.reverse();
         this.log.forEach(entry => {
@@ -34,7 +35,7 @@ export class LogComponent implements OnInit, OnDestroy {
       if (this.connection) {
         this.connection.stop();
       }
-      this.connection = new HubConnection("https://digit-app.azurewebsites.net/log");
+      this.connection = new HubConnection(`${environment.digitServiceUrl}/log`);
       this.connection.on("log", data => {
         this.log.unshift(data);
       });
@@ -49,7 +50,7 @@ export class LogComponent implements OnInit, OnDestroy {
   }
 
   testLogEntry() {
-    this.http.post(`https://digit-app.azurewebsites.net/api/device/${this.deviceId}/log`, {
+    this.http.post(`${environment.digitServiceUrl}/api/device/${this.deviceId}/log`, {
       occurenceTime: new Date(),
       code: 99,
       message: "test"
