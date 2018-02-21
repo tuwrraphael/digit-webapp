@@ -10,15 +10,22 @@ import { environment } from '../environments/environment';
 
 import { DeviceModule } from './device/device.module';
 
+import { OAuthModule } from 'angular-oauth2-oidc';
+import { HttpClientModule } from '@angular/common/http';
+import { HomeComponent } from './home/home.component';
+
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent
   ],
   imports: [
     DeviceModule,
     BrowserModule,
     AppRoutingModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+    HttpClientModule,
+    OAuthModule.forRoot()
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'de' } ],
   bootstrap: [AppComponent]

@@ -1,0 +1,19 @@
+<div class="mdc-layout-grid home-container">
+  <div class="mdc-layout-grid__inner">
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" *ngIf="!isLoggedIn">
+      <h1>Anmelden</h1>
+      <button class="mdc-button mdc-button--raised" (click)="login()">
+        Login
+      </button>
+    </div>
+    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" *ngIf="isLoggedIn">
+      <h1>Angemeldet</h1>
+      <div>
+        UserID: {{userId}}
+      </div>
+      <button class="mdc-button mdc-button--raised" (click)="logout()">
+        Logout
+      </button>
+    </div>
+  </div>
+</div>
