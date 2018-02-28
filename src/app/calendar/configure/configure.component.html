@@ -1,0 +1,18 @@
+<h1>Calendar Configuration</h1>
+<div *ngIf="loading">loading...</div>
+<div *ngIf="!loading">
+  <div *ngIf="0 == configuration.length">
+    no calendars configured
+  </div>
+  <div *ngFor="let entry of configuration">
+    <h2>{{entry.identifier}}<span *ngIf="entry.changed"> - changed</span></h2>
+    <div *ngFor="let feed of entry.feeds">
+      <input name="{{entry.id}}_{{feed.id}}" type="checkbox" [ngModel]="feed.subscribed" (ngModelChange)="changeFeed(entry.id, feed.id, $event)" />
+      <label for="{{entry.id}}_{{feed.id}}">{{feed.name}}</label>
+    </div>
+    <button (click)="removeLink(entry.id)">Disconnect Calendar</button>
+  </div>
+  <button (click)="link('microsoft')">Link Microsoft Calendar</button>
+  <button [disabled]="!configChanged()" (click)="saveConfig()">Save Configuration</button>
+</div>
+

@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import 'rxjs/add/operator/map';
 
@@ -15,7 +15,7 @@ import { HubConnection } from '@aspnet/signalr-client';
 })
 export class LogComponent implements OnInit, OnDestroy {
 
-  constructor(private activatedRoute: ActivatedRoute, private http: Http) { }
+  constructor(private activatedRoute: ActivatedRoute, private http: HttpClient) { }
 
   deviceId: string;
   log: LogEntry[];
@@ -24,8 +24,8 @@ export class LogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.activatedRoute.parent.params.map(p => p.id).subscribe(id => {
       this.deviceId = id;
-      this.http.get(`${environment.digitServiceUrl}/api/device/${id}/log`, { params: { history: 15 } }).subscribe(data => {
-        this.log = data.json() || [];
+      this.http.get(`${environment.digitServiceUrl}/api/device/${id}/log`, { params: { history: "15" } }).subscribe(data => {
+        this.log = <LogEntry[]>(data || []);
         this.log.reverse();
         this.log.forEach(entry => {
           entry.occurenceTime = new Date(entry.occurenceTime);

@@ -7,6 +7,7 @@
     </section>
     <section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
       <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Watch" [routerLink]="['/device/12345/log']" alt="Watch">watch</a>
+      <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Calendar" [routerLink]="['/calendar/view']" alt="Calendar">event</a>
     </section>
   </div>
 </header>
