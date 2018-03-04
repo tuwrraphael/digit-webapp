@@ -27,8 +27,8 @@ export class ConfigureComponent implements OnInit {
 
   constructor(private http: HttpClient) { }
 
-  private configuration: CalendarConfiguration[];
-  private loading: boolean;
+  configuration: CalendarConfiguration[];
+  loading: boolean;
 
   reload() {
     this.configuration = null;

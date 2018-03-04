@@ -1,1 +1,12 @@
+<h1>Calendar View</h1>
 <a [routerLink]="['../configure']">Configure</a>
+<div>
+  <div *ngIf="events && 0 === events.length">
+    no events
+  </div>
+  <div *ngFor="let event of events">
+    <h2>{{event.subject}}</h2>
+    <div>{{event.location}}</div>
+    <div>{{event.start | date}} - {{event.end | date}}</div>
+  </div>
+</div>
