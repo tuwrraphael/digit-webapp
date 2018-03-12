@@ -18,11 +18,13 @@ import { HomeComponent } from './home/home.component';
 import { AuthGuard } from './auth-guard';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './auth.token-interceptor';
+import { MeComponent } from './me/me.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    MeComponent
   ],
   imports: [
     DeviceModule,
@@ -33,7 +35,8 @@ import { TokenInterceptor } from './auth.token-interceptor';
     HttpClientModule,
     OAuthModule.forRoot()
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'de' }, AuthGuard,
+  providers: [{ provide: LOCALE_ID, useValue: 'de' },
+    AuthGuard,
   {
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,

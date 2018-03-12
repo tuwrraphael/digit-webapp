@@ -1,0 +1,19 @@
+@import "container/container-mixins.scss";
+@import "theme.scss";
+
+.overview-container {
+  @include container-width();
+}
+.overview-table {
+  width:100%;
+}
+.overview-table__token-cell {
+  word-wrap: break-word;
+  max-width: 10em;
+}
+
+.overview-section {
+  &--incomplete {
+    color: $error-text;
+  }
+}

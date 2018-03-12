@@ -6,6 +6,7 @@ import { ConfigureComponent } from './configure/configure.component';
 import { ViewComponent } from './view/view.component';
 
 import { FormsModule } from '@angular/forms';
+import { CalendarService } from './api/calendar.service';
 
 @NgModule({
   imports: [
@@ -13,6 +14,7 @@ import { FormsModule } from '@angular/forms';
     CalendarRoutingModule,
     FormsModule
   ],
-  declarations: [ConfigureComponent, ViewComponent]
+  declarations: [ConfigureComponent, ViewComponent],
+  providers: [CalendarService]
 })
 export class CalendarModule { }

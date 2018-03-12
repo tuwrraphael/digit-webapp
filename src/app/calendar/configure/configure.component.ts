@@ -1,22 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-
-class CalendarLinkResponse {
-  redirectUri: string;
-}
-
-class Feed {
-  id: string;
-  name: string;
-  subscribed: boolean;
-}
-
-class CalendarConfiguration {
-  changed: boolean;
-  id: string;
-  feeds: Feed[];
-}
+import { CalendarService } from '../api/calendar.service';
+import { CalendarConfiguration } from '../model/calendar-conifguration';
+import { Feed } from '../model/feed';
 
 @Component({
   selector: 'app-configure',
@@ -25,7 +10,7 @@ class CalendarConfiguration {
 })
 export class ConfigureComponent implements OnInit {
 
-  constructor(private http: HttpClient) { }
+  constructor(private calendarService: CalendarService) { }
 
   configuration: CalendarConfiguration[];
   loading: boolean;
@@ -33,8 +18,8 @@ export class ConfigureComponent implements OnInit {
   reload() {
     this.configuration = null;
     this.loading = true;
-    this.http.get(`${environment.calendarServiceUrl}/api/configuration/list`).subscribe(data => {
-      this.configuration = <CalendarConfiguration[]>data;
+    this.calendarService.getConfigurations().subscribe(data => {
+      this.configuration = data;
       this.loading = false;
     });
   }
@@ -61,28 +46,21 @@ export class ConfigureComponent implements OnInit {
   saveConfig() {
     this.configuration.filter(a => a.changed)
       .forEach(c => {
-        this.http.put(`${environment.calendarServiceUrl}/api/configuration/${c.id}/feeds`,
-          c.feeds.filter(v => v.subscribed).map(v => v.id)
-        ).subscribe(() => {
-          c.changed = false;
-        });
+        this.calendarService.setFeeds(c.id, c.feeds.filter(v => v.subscribed))
+          .subscribe(() => {
+            c.changed = false;
+          });
       });
   }
 
   link(calendarType: string) {
-    this.http.post(`${environment.calendarServiceUrl}/api/configuration/link`, {
-      calendarType: calendarType,
-      redirectUri: window.location.origin + '/calendar/configure'
-    }).subscribe(data => {
-      var res = <CalendarLinkResponse>data;
-      location.replace(res.redirectUri);
+    this.calendarService.linkCalendar(calendarType).subscribe(data => {
+      location.replace(data.redirectUri);
     });
   }
 
   removeLink(configId: string) {
-    this.http.delete(`${environment.calendarServiceUrl}/api/configuration`, {
-      params: { id: configId }
-    }).subscribe(data => {
+    this.calendarService.removeLink(configId).subscribe(data => {
       var config = this.configuration.find(v => v.id == configId);
       this.configuration.splice(this.configuration.indexOf(config));
     });

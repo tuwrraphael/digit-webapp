@@ -1,19 +1,16 @@
 <div class="mdc-layout-grid home-container">
-  <div class="mdc-layout-grid__inner">
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" *ngIf="!isLoggedIn">
-      <h1>Anmelden</h1>
-      <button class="mdc-button mdc-button--raised" (click)="login()">
-        Login
-      </button>
-    </div>
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12" *ngIf="isLoggedIn">
-      <h1>Angemeldet</h1>
-      <div>
-        UserID: {{userId}}
-      </div>
-      <button class="mdc-button mdc-button--raised" (click)="logout()">
-        Logout
-      </button>
-    </div>
-  </div>
+  <h1>
+    Digit
+  </h1>
+  <p>
+    Die <i>smarte</i> Watch, die mehr ist als ein zusätzlicher Bildschirm fürs
+    Handy. Hier
+    überwachst du dein Gerät,
+    konfigurierst Einstellungen und verbundene Dienste oder
+    richtest die Verbindung zur App ein.
+  </p>
+  <button *ngIf="!isLoggedIn" class="mdc-button mdc-button--raised" (click)="login()">
+    Anmelden
+  </button>
+  <a *ngIf="isLoggedIn" [routerLink]="['/me']" class="mdc-button mdc-button--raised">Zur Übersicht</a>
 </div>
