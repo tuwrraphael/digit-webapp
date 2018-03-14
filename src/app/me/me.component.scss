@@ -3,17 +3,25 @@
 
 .overview-container {
   @include container-width();
+  margin:auto;
+  padding:16px;
 }
 .overview-table {
-  width:100%;
+  td:first-of-type{
+    font-weight:bold;
+  }
 }
 .overview-table__token-cell {
   word-wrap: break-word;
-  max-width: 10em;
+  max-width: 20em;
 }
 
-.overview-section {
+.overview-section__heading {
   &--incomplete {
     color: $error-text;
   }
+}
+
+.overview-section__actions {
+  margin-top:1em;
 }

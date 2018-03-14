@@ -1,68 +1,105 @@
-<div class="mdc-layout-grid overview-container">
+<div class="overview-container">
   <h1 class="mdc-typography--display2">Übersicht</h1>
-  <div class="mdc-layout-grid__inner">
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-      <h2 class="mdc-typography--display1">Uhr</h2>
-    </div>
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-      <h2 class="mdc-typography--display1">Account</h2>
-      <table class="overview-table">
-        <tbody>
-          <tr>
-            <td>User ID</td>
-            <td>{{userId}}</td>
-          </tr>
-          <tr>
-            <td>Accesstoken</td>
-            <td class="overview-table__token-cell">
-              {{accessToken || '...'}}
-            </td>
-            <td>
-              <button *ngIf="!accessToken" class="mdc-button" (click)="showAccessToken()">
-                Accesstoken zeigen
-              </button>
-            </td>
-          </tr>
-          <tr *ngIf="accessToken">
-            <td>Scopes</td>
-            <td>{{scopes}}</td>
-          </tr>
-          <tr *ngIf="accessToken">
-            <td>Expiration</td>
-            <td>{{expiration | date:'mediumTime'  }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <button class="mdc-button mdc-button--raised" (click)="logout()">
-        Logout
-      </button>
-      <a [routerLink]="['/device/12345/log']" class="mdc-button mdc-button--raised">
-        <i class="material-icons mdc-button__icon">list</i>
-        Log anzeigen
-      </a>
-    </div>
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-      <h2 class="mdc-typography--display1">App</h2>
-    </div>
-    <div *ngIf="null != subscribedFeeds" class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-      <h2 class="overview-section mdc-typography--display1"
-          [ngClass]="{'overview-section--incomplete' : calendarIncomplete}">
-        Kalender
-        <span *ngIf="calendarIncomplete" class="mdc-typography--caption">(unvollständig)</span>
-      </h2>
-      Es wurden
+  <div *ngIf="'running' == maintainance">
+    Es wird eine automatische Wartung ausgeführt.
+  </div>
+  <div *ngIf="'done' == maintainance">
+    Es wurde eine automatische Wartung ausgeführt.
+  </div>
+  <div *ngIf="'error' == maintainance">
+    Beim Ausführen einer automatischen Wartung kam es zu einem Fehler.
+  </div>
+  <div *ngIf="'running' == userCreation">
+    Account wird zum ersten Mal konfiguriert.
+  </div>
+  <div *ngIf="'done' == userCreation">
+    Account wurde angelegt.
+  </div>
+  <div *ngIf="'error' == userCreation">
+    Account konnte nicht konfiguriert werden.
+  </div>
+  <section>
+    <h2 class="mdc-typography--display1">Uhr</h2>
+  </section>
+  <section>
+    <h2 class="mdc-typography--display1">Account</h2>
+    <table class="overview-table">
+      <tbody>
+        <tr>
+          <td>User ID</td>
+          <td>{{userId}}</td>
+        </tr>
+        <tr>
+          <td>Accesstoken</td>
+          <td class="overview-table__token-cell">
+            {{accessToken}}
+            <button *ngIf="!accessToken" class="mdc-button" (click)="showAccessToken()">
+              Accesstoken zeigen
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="accessToken">
+          <td>Scopes</td>
+          <td>{{scopes}}</td>
+        </tr>
+        <tr *ngIf="accessToken">
+          <td>Expiration</td>
+          <td>{{expiration | date:'mediumTime'  }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="mdc-button mdc-button--raised" (click)="logout()">
+      Logout
+    </button>
+    <a [routerLink]="['/device/12345/log']" class="mdc-button mdc-button--raised">
+      <i class="material-icons mdc-button__icon">list</i>
+      Log anzeigen
+    </a>
+  </section>
+  <section>
+    <h2 class="overview-section__heading mdc-typography--display1"
+        [ngClass]="{'overview-section__heading--incomplete' : appIncomplete}">
+      App
+      <span *ngIf="appIncomplete" class="mdc-typography--caption">(unvollständig)</span>
+    </h2>
+    <table class="overview-table">
+      <tbody>
+        <tr>
+          <td>Verbindung eingerichtet</td>
+          <td>
+            <span *ngIf="userInfo && userInfo.pushChannelRegistered">Ja</span>
+            <span *ngIf="userInfo && !userInfo.pushChannelRegistered">Nein. Melde dich in der App an um das Problem zu beheben.</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+  <section>
+    <h2 class="overview-section__heading mdc-typography--display1"
+        [ngClass]="{'overview-section__heading--incomplete' : calendarIncomplete}">
+      Kalender
+      <span *ngIf="calendarIncomplete" class="mdc-typography--caption">(unvollständig)</span>
+    </h2>
+    <span *ngIf="userInfo && !userInfo.calendarReminderActive">
+      Es wurde ein Fehler bei der Verbindung mit dem Kalender festgestellt.
+      <span *ngIf="'running' == maintainance">
+        Das Problem wird durch die automatische Wartung behoben.
+      </span>
+    </span>
+    <div *ngIf="null != subscribedFeeds">
+      Es
       <span [ngPlural]="subscribedFeeds">
-        <ng-template ngPluralCase="=0">keine Kalender</ng-template>
-        <ng-template ngPluralCase="=1">ein Kalender</ng-template>
-        <ng-template ngPluralCase="other">{{subscribedFeeds}} Kalender</ng-template>
+        <ng-template ngPluralCase="=0">wurden keine Kalender</ng-template>
+        <ng-template ngPluralCase="=1">wurde ein Kalender</ng-template>
+        <ng-template ngPluralCase="other">wurden {{subscribedFeeds}} Kalender</ng-template>
       </span>
       konfiguriert.
     </div>
-    <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+    <div class="overview-section__actions">
       <a [routerLink]="['/calendar/configure']" class="mdc-button mdc-button--raised">
         <i class="material-icons mdc-button__icon">event</i>
         Kalender konfigurieren
       </a>
     </div>
-  </div>
+  </section>
 </div>
