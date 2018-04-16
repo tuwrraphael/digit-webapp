@@ -12,12 +12,25 @@ interface UserInformation {
   calendarReminderActive: string;
 }
 
+interface BatteryStatus {
+  voltage: number;
+  stateOfCharge: number;
+  rawValue: number;
+  lastMeasurementTime: Date;
+  lastChargedTime: Date;
+}
+
+interface DeviceStatus {
+  battery: BatteryStatus;
+}
+
 @Component({
   selector: 'app-me',
   templateUrl: './me.component.html',
   styleUrls: ['./me.component.scss']
 })
 export class MeComponent implements OnInit {
+  devices: DeviceStatus[];
   userCreation: string;
   maintainance: string = null;
   userInfo: UserInformation;
@@ -26,7 +39,7 @@ export class MeComponent implements OnInit {
   constructor(private oauthService: OAuthService,
     private calendarService: CalendarService,
     private httpClient: HttpClient,
-    private router : Router) { }
+    private router: Router) { }
 
   private handleError(error: HttpErrorResponse) {
     if (error.status == 404) {
@@ -50,8 +63,9 @@ export class MeComponent implements OnInit {
           .reduce((a, b) => a + b);
       }
     });
+    var self = this;
     this.httpClient.get(`${environment.digitServiceUrl}/api/user`)
-      .pipe(catchError(this.handleError))
+      .pipe(catchError(this.handleError.bind(self)))
       .map(data => <UserInformation>data)
       .subscribe(userInfo => {
         this.userInfo = userInfo;
@@ -65,6 +79,17 @@ export class MeComponent implements OnInit {
             }, () => this.maintainance = "error");
         }
       });
+    this.httpClient.get(`${environment.digitServiceUrl}/api/device`)
+      .map(data => <DeviceStatus[]>data)
+      .subscribe(devices => {
+        devices.forEach(v => {
+          if (v.battery) {
+            v.battery.lastMeasurementTime = v.battery.lastMeasurementTime ? new Date(v.battery.lastMeasurementTime) : null;
+            v.battery.lastChargedTime = v.battery.lastChargedTime ? new Date(v.battery.lastChargedTime) : null;
+          }
+        });
+        this.devices = devices;
+      })
   }
 
   accessToken = null;
@@ -99,6 +124,13 @@ export class MeComponent implements OnInit {
 
   showAccessToken() {
     this.accessToken = this.oauthService.getAccessToken();
+  }
+
+  timeSinceCharge(b: BatteryStatus) {
+    if (!b.lastChargedTime) {
+      return null;
+    }
+    return ((new Date().getTime()) - b.lastChargedTime.getTime()) / 1000 / 60 / 60;
   }
 
   logout() {

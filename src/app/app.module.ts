@@ -19,6 +19,8 @@ import { AuthGuard } from './auth-guard';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './auth.token-interceptor';
 import { MeComponent } from './me/me.component';
+import { CommonModule } from '@angular/common';
+
 
 @NgModule({
   declarations: [
@@ -33,7 +35,8 @@ import { MeComponent } from './me/me.component';
     AppRoutingModule,
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     HttpClientModule,
-    OAuthModule.forRoot()
+    OAuthModule.forRoot(),
+    CommonModule
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'de' },
     AuthGuard,

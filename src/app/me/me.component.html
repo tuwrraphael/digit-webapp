@@ -20,6 +20,30 @@
   </div>
   <section>
     <h2 class="mdc-typography--display1">Uhr</h2>
+    <div *ngFor="let device of devices; let i = index">
+      <h3 class="mdc-typography--subheading2">Gerät {{i + 1}}</h3>
+      <table class="overview-table" *ngIf="device.battery">
+        <tbody>
+          <tr>
+            <td>Ladezustand</td>
+            <td>{{device.battery.stateOfCharge * 100 | number:'1.0-0'}}%</td>
+          </tr>
+          <tr>
+            <td>Spannung</td>
+            <td>{{device.battery.voltage | number:'1.0-2'}}V</td>
+          </tr>
+          <tr>
+            <td>Letzte Batteriemessung</td>
+            <td>{{device.battery.lastMeasurementTime | date:'medium'}}</td>
+          </tr>
+          <tr>
+            <td>Zeit seit dem letzten Laden</td>
+            <td>{{timeSinceCharge(device.battery) ||  0 | number:'1.0-1'}} Stunden</td>
+          </tr>
+          <tr></tr>
+        </tbody>
+      </table>
+    </div>
   </section>
   <section>
     <h2 class="mdc-typography--display1">Account</h2>
