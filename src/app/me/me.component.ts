@@ -137,4 +137,9 @@ export class MeComponent implements OnInit {
     this.oauthService.logOut(true);
     this.router.navigate(["/home"]);
   }
+
+  measureBattery() {
+    this.httpClient.post(`${environment.digitServiceUrl}/api/device/12345/battery/measure`, null)
+      .subscribe();
+  }
 }
