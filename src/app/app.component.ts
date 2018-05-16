@@ -5,6 +5,8 @@ import { OAuthService } from 'angular-oauth2-oidc';
 import { JwksValidationHandler } from 'angular-oauth2-oidc';
 import { Router } from '@angular/router';
 
+import {  filter } from 'rxjs/operators';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -20,7 +22,7 @@ export class AppComponent {
     this.oauthService.setStorage(localStorage);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     this.oauthService.loadDiscoveryDocumentAndTryLogin();
-    this.oauthService.events.filter(e => e.type === 'token_received').subscribe(e => {
+    this.oauthService.events.pipe(filter(e => e.type === 'token_received')).subscribe(e => {
       this.router.navigate(['/me']);
     });
   }

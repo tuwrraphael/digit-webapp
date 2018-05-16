@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError } from 'rxjs/operators';
+import { Observable } from "rxjs";
 import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
 interface UserInformation {
@@ -51,7 +52,7 @@ export class MeComponent implements OnInit {
           this.userInfo = info;
         }, () => this.userCreation = "error");
     }
-    return new ErrorObservable("Get user failed");
+    return Observable.throw("Get user failed");
   };
 
   ngOnInit() {
