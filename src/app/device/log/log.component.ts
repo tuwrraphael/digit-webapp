@@ -1,8 +1,10 @@
+
+import {map} from 'rxjs/operators';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import 'rxjs/add/operator/map';
+
 
 import { LogEntry } from './log-entry';
 
@@ -22,7 +24,7 @@ export class LogComponent implements OnInit, OnDestroy {
   connection: HubConnection;
 
   ngOnInit() {
-    this.activatedRoute.parent.params.map(p => p.id).subscribe(id => {
+    this.activatedRoute.parent.params.pipe(map(p => p.id)).subscribe(id => {
       this.deviceId = id;
       this.http.get(`${environment.digitServiceUrl}/api/device/${id}/log`, { params: { history: "15" } }).subscribe(data => {
         this.log = <LogEntry[]>(data || []);

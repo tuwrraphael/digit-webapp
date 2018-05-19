@@ -1,3 +1,5 @@
+
+import {map} from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -11,7 +13,7 @@ export class CalendarService {
   constructor(private httpClient: HttpClient) { }
 
   getConfigurations() {
-    return this.httpClient.get(`${environment.calendarServiceUrl}/api/configuration/list`).map(data => <CalendarConfiguration[]>data);
+    return this.httpClient.get(`${environment.calendarServiceUrl}/api/configuration/list`).pipe(map(data => <CalendarConfiguration[]>data));
   }
 
   setFeeds(configId:string, subscribed: Feed[]) {
@@ -24,7 +26,7 @@ export class CalendarService {
     return this.httpClient.post(`${environment.calendarServiceUrl}/api/configuration/link`, {
       calendarType: calendarType,
       redirectUri: window.location.origin + '/calendar/configure'
-    }).map(data => <CalendarLinkResponse>data);
+    }).pipe(map(data => <CalendarLinkResponse>data));
   }
 
   removeLink(configId: string) {

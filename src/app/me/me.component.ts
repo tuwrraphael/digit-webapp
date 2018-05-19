@@ -1,12 +1,13 @@
+
+import {throwError as observableThrowError,  Observable } from 'rxjs';
+
+import {map,  catchError } from 'rxjs/operators';
 import { Component, OnInit } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { CalendarService } from '../calendar/api/calendar.service';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
-import { Observable } from "rxjs";
-import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
 interface UserInformation {
   pushChannelRegistered: string;
@@ -45,14 +46,14 @@ export class MeComponent implements OnInit {
   private handleError(error: HttpErrorResponse) {
     if (error.status == 404) {
       this.userCreation = "running";
-      this.httpClient.post(`${environment.digitServiceUrl}/api/user`, null)
-        .map(data => <UserInformation>data)
+      this.httpClient.post(`${environment.digitServiceUrl}/api/user`, null).pipe(
+        map(data => <UserInformation>data))
         .subscribe(info => {
           this.userCreation = "done";
           this.userInfo = info;
         }, () => this.userCreation = "error");
     }
-    return Observable.throw("Get user failed");
+    return observableThrowError("Get user failed");
   };
 
   ngOnInit() {
@@ -66,22 +67,22 @@ export class MeComponent implements OnInit {
     });
     var self = this;
     this.httpClient.get(`${environment.digitServiceUrl}/api/user`)
-      .pipe(catchError(this.handleError.bind(self)))
-      .map(data => <UserInformation>data)
+      .pipe(catchError(this.handleError.bind(self))).pipe(
+      map(data => <UserInformation>data))
       .subscribe(userInfo => {
         this.userInfo = userInfo;
         if (!userInfo.calendarReminderActive) {
           this.maintainance = "running";
-          this.httpClient.patch(`${environment.digitServiceUrl}/api/user`, null)
-            .map(data => <UserInformation>data)
+          this.httpClient.patch(`${environment.digitServiceUrl}/api/user`, null).pipe(
+            map(data => <UserInformation>data))
             .subscribe(info => {
               this.maintainance = "done";
               this.userInfo = info;
             }, () => this.maintainance = "error");
         }
       });
-    this.httpClient.get(`${environment.digitServiceUrl}/api/device`)
-      .map(data => <DeviceStatus[]>data)
+    this.httpClient.get(`${environment.digitServiceUrl}/api/device`).pipe(
+      map(data => <DeviceStatus[]>data))
       .subscribe(devices => {
         devices.forEach(v => {
           if (v.battery) {
