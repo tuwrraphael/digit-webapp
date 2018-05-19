@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map';
 
 import { LogEntry } from './log-entry';
 
-//import { HubConnection } from '@aspnet/signalr-client';
+import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 
 @Component({
   selector: 'app-log',
@@ -19,7 +19,7 @@ export class LogComponent implements OnInit, OnDestroy {
 
   deviceId: string;
   log: LogEntry[];
-  //connection: HubConnection;
+  connection: HubConnection;
 
   ngOnInit() {
     this.activatedRoute.parent.params.map(p => p.id).subscribe(id => {
@@ -32,21 +32,23 @@ export class LogComponent implements OnInit, OnDestroy {
           entry.logTime = new Date(entry.logTime);
         });
       });
-      //if (this.connection) {
-      //  this.connection.stop();
-      //}
-      //this.connection = new HubConnection(`${environment.digitServiceUrl}/log`);
-      //this.connection.on("log", data => {
-      //  this.log.unshift(data);
-      //});
-      //this.connection.start();
+      if (this.connection) {
+        this.connection.stop();
+      }
+      this.connection = new HubConnectionBuilder()
+        .withUrl(`${environment.digitServiceUrl}/log`)
+        .build();
+      this.connection.on("log", data => {
+        this.log.unshift(data);
+      });
+      this.connection.start();
     });
   }
 
   ngOnDestroy() {
-    //if (this.connection) {
-    //  this.connection.stop();
-    //}
+    if (this.connection) {
+      this.connection.stop();
+    }
   }
 
   testLogEntry() {
