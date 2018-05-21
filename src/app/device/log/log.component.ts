@@ -26,7 +26,7 @@ export class LogComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.activatedRoute.parent.params.pipe(map(p => p.id)).subscribe(id => {
       this.deviceId = id;
-      this.http.get(`${environment.digitServiceUrl}/api/device/${id}/log`, { params: { history: "15" } }).subscribe(data => {
+      this.http.get(`${environment.digitServiceUrl}/api/device/${id}/log`, { params: { history: "25" } }).subscribe(data => {
         this.log = <LogEntry[]>(data || []);
         this.log.reverse();
         this.log.forEach(entry => {

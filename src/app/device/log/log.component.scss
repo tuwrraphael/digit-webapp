@@ -16,6 +16,11 @@
   max-width: 60em;
 }
 
+.mdc-list-item__text {
+  overflow: visible;
+  white-space: normal;
+}
+
 .mdc-list-item {
-  white-space: normal !important;
+  height: auto;
 }
