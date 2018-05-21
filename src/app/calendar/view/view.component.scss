@@ -1,0 +1,5 @@
+@import "container/container-mixins.scss";
+
+.calendar-container {
+  @include container();
+}

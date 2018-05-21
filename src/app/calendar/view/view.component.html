@@ -1,12 +1,21 @@
-<h1>Calendar View</h1>
-<a [routerLink]="['../configure']">Configure</a>
-<div>
-  <div *ngIf="events && 0 === events.length">
-    no events
-  </div>
-  <div *ngFor="let event of events">
-    <h2>{{event.subject}}</h2>
-    <div>{{event.location}}</div>
-    <div>{{event.start | date}} - {{event.end | date}}</div>
-  </div>
+<div class="calendar-container">
+  <h1 class="mdc-typography--headline2">Kalender</h1>
+  <a [routerLink]="['../configure']" class="mdc-button mdc-button--raised">
+    <i class="material-icons mdc-button__icon">event</i>
+    Kalender konfigurieren
+  </a>
+  <h2 class="mdc-typography--headline4">nächste Ereignisse</h2>
+  <ul class="mdc-list mdc-list--two-line mdc-list--avatar-list">
+    <li *ngIf="events && 0 === events.length">
+      <span class="mdc-list-item__text">
+        keine Einträge gefunden
+      </span>
+    </li>
+    <li *ngFor="let event of events" class="mdc-list-item">
+      <span class="mdc-list-item__text">
+        {{event.subject}} @ {{event.location}}
+        <span class="mdc-list-item__secondary-text">{{event.start | date}} - {{event.end | date}}</span>
+      </span>
+    </li>
+  </ul>
 </div>

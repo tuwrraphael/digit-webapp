@@ -1,0 +1,8 @@
+@import "container/container-mixins.scss";
+
+.calendar-container {
+  @include container();
+  &__actions {
+    margin-top: 4em;
+  }
+}

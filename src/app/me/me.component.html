@@ -1,5 +1,5 @@
 <div class="overview-container">
-  <h1 class="mdc-typography--display2">Übersicht</h1>
+  <h1 class="mdc-typography--headline2">Übersicht</h1>
   <div *ngIf="'running' == maintainance">
     Es wird eine automatische Wartung ausgeführt.
   </div>
@@ -19,9 +19,9 @@
     Account konnte nicht konfiguriert werden.
   </div>
   <section>
-    <h2 class="mdc-typography--display1">Uhr</h2>
+    <h2 class="mdc-typography--headline3">Uhr</h2>
     <div *ngFor="let device of devices; let i = index">
-      <h3 class="mdc-typography--subheading2">Gerät {{i + 1}}</h3>
+      <h3 class="mdc-typography--headline4">Gerät {{i + 1}}</h3>
       <table class="overview-table" *ngIf="device.battery">
         <tbody>
           <tr>
@@ -49,7 +49,7 @@
     </div>
   </section>
   <section>
-    <h2 class="mdc-typography--display1">Account</h2>
+    <h2 class="mdc-typography--headline3">Account</h2>
     <table class="overview-table">
       <tbody>
         <tr>
@@ -84,7 +84,7 @@
     </a>
   </section>
   <section>
-    <h2 class="overview-section__heading mdc-typography--display1"
+    <h2 class="overview-section__heading mdc-typography--headline3"
         [ngClass]="{'overview-section__heading--incomplete' : appIncomplete}">
       App
       <span *ngIf="appIncomplete" class="mdc-typography--caption">(unvollständig)</span>
@@ -102,7 +102,7 @@
     </table>
   </section>
   <section>
-    <h2 class="overview-section__heading mdc-typography--display1"
+    <h2 class="overview-section__heading mdc-typography--headline3"
         [ngClass]="{'overview-section__heading--incomplete' : calendarIncomplete}">
       Kalender
       <span *ngIf="calendarIncomplete" class="mdc-typography--caption">(unvollständig)</span>

@@ -1,3 +1,4 @@
+@import "container/container-mixins.scss";
 .log-level-0-color {
   background-color: #cce5ff;
 }
@@ -12,8 +13,7 @@
 }
 
 .log-container {
-  margin: auto;
-  max-width: 60em;
+  @include container();
 }
 
 .mdc-list-item__text {

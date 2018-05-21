@@ -1,18 +1,22 @@
-<h1>Calendar Configuration</h1>
-<div *ngIf="loading">loading...</div>
-<div *ngIf="!loading">
-  <div *ngIf="0 == configuration.length">
-    no calendars configured
-  </div>
-  <div *ngFor="let entry of configuration">
-    <h2>{{entry.identifier}}<span *ngIf="entry.changed"> - changed</span></h2>
-    <div *ngFor="let feed of entry.feeds">
-      <input name="{{entry.id}}_{{feed.id}}" type="checkbox" [ngModel]="feed.subscribed" (ngModelChange)="changeFeed(entry.id, feed.id, $event)" />
-      <label for="{{entry.id}}_{{feed.id}}">{{feed.name}}</label>
+<div class="calendar-container">
+  <h1 class="mdc-typography--headline2">Kalenderkonfiguration</h1>  
+  <div *ngIf="loading">laden...</div>
+  <div *ngIf="!loading">
+    <div *ngIf="0 == configuration.length">
+      keine Kalender konfiguriert
     </div>
-    <button (click)="removeLink(entry.id)">Disconnect Calendar</button>
+    <div *ngFor="let entry of configuration">
+      <h2 class="mdc-typography--headline4">{{entry.identifier}}<span *ngIf="entry.changed"> - geändert</span></h2>
+      <h3 class="mdc-typography--headline5">Feeds</h3>
+      <div *ngFor="let feed of entry.feeds">
+        <input name="{{entry.id}}_{{feed.id}}" type="checkbox" [ngModel]="feed.subscribed" (ngModelChange)="changeFeed(entry.id, feed.id, $event)" />
+        <label for="{{entry.id}}_{{feed.id}}">{{feed.name}}</label>
+      </div>
+      <button class="mdc-button" (click)="removeLink(entry.id)">Kalender trennen</button>
+    </div>
+    <div class="calendar-container__actions">
+      <button class="mdc-button" (click)="link('microsoft')">Microsoft Kalender verbinden</button>
+      <button class="mdc-button mdc-button--raised" [disabled]="!configChanged()" (click)="saveConfig()">Konfiguration speichern</button>
+    </div>
   </div>
-  <button (click)="link('microsoft')">Link Microsoft Calendar</button>
-  <button [disabled]="!configChanged()" (click)="saveConfig()">Save Configuration</button>
 </div>
-
