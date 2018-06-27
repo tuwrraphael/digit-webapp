@@ -13,7 +13,7 @@
     </li>
     <li *ngFor="let event of events" class="mdc-list-item">
       <span class="mdc-list-item__text">
-        {{event.subject}} @ {{event.location}}
+        {{event.subject}} @ {{event.location.text}}
         <span class="mdc-list-item__secondary-text">{{event.start | date}} - {{event.end | date}}</span>
       </span>
     </li>

@@ -1,13 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-
-class Event {
-  subject: string;
-  location: string;
-  start: Date;
-  end: Date;
-}
+import { CalendarService } from '../api/calendar.service';
+import { EventData } from '../model/event';
 
 @Component({
   selector: 'app-view',
@@ -16,18 +10,13 @@ class Event {
 })
 export class ViewComponent implements OnInit {
 
-  events: Event[];
+  events: EventData[];
 
-  constructor(private http: HttpClient) { }
+  constructor(private calendarService: CalendarService) { }
 
   ngOnInit() {
-    this.http.get(`${environment.calendarServiceUrl}/api/calendar/me`).subscribe(data => {
-      this.events = <Event[]>data;
-      this.events.forEach(v => {
-        v.start = new Date(v.start);
-        v.end = new Date(v.end);
-      });
+    this.calendarService.getEvents().subscribe(data => {
+      this.events = data;
     });
   }
-
 }
