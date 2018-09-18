@@ -8,5 +8,7 @@ export const environment = {
   digitServiceUrl: "",
   calendarServiceUrl: "",
   identityUrl: "",
-  clientId: ""
+  clientId: "",
+  vapidPublicKey: "",
+  pushServerUrl: ""
 };

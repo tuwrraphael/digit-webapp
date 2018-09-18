@@ -5,7 +5,7 @@ export const authConfig: AuthConfig = {
   redirectUri: window.location.origin + '/index.html',
   postLogoutRedirectUri: window.location.origin + '/index.html',
   issuer: environment.identityUrl,
-  scope: 'openid digit.user calendar.user travel.user',
+  scope: 'openid digit.user calendar.user travel.user push.user',
   oidc: true,
   requestAccessToken: true,
   requireHttps: true,

@@ -20,13 +20,16 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './auth.token-interceptor';
 import { MeComponent } from './me/me.component';
 import { CommonModule } from '@angular/common';
+import { NotificationsComponent } from './notifications/notifications.component';
+import { PushService } from './api/push.service';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    MeComponent
+    MeComponent,
+    NotificationsComponent
   ],
   imports: [
     DeviceModule,
@@ -40,6 +43,7 @@ import { CommonModule } from '@angular/common';
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'de' },
     AuthGuard,
+    PushService,
   {
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,
