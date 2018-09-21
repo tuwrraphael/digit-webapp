@@ -1,5 +1,11 @@
 <div class="notifications-container">
-  {{pushChannels | json }}
   <h1 class="mdc-typography--headline2">Benachrichtigungen</h1>
-  <button class="mdc-button" (click)="subscribeToNotifications()">Notifications aktivieren</button>
+  <div *ngIf="pushChannels">
+    <div *ngFor="let channel of pushChannels">
+      <span *ngIf="channel.id == localPushConfigId"><strong>Dieses</strong></span>
+      Gerät: {{channel.endpointInfo}}
+      <button class="mdc-button" (click)="unsubscribe(channel.id)">löschen</button>
+    </div>
+  </div>
+  <button *ngIf="!isSubscribed()" class="mdc-button" (click)="subscribe()">Notifications für diesen Broswer aktivieren</button>
 </div>
