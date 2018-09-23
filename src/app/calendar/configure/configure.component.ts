@@ -62,8 +62,7 @@ export class ConfigureComponent implements OnInit {
   removeLink(configId: string) {
     this.calendarService.removeLink(configId).subscribe(data => {
       var config = this.configuration.find(v => v.id == configId);
-      this.configuration.splice(this.configuration.indexOf(config));
+      this.configuration.splice(this.configuration.indexOf(config), 1);
     });
   }
-
 }
