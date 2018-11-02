@@ -49,7 +49,12 @@ export class NotificationsComponent implements OnInit {
 
   unsubscribe(id: string) {
     if (this.localPushConfigId == id) {
-      this.swPush.unsubscribe().then(() => this.deleteSubscription(id));
+      this.swPush.unsubscribe()
+        .catch(err => {
+          console.info(`Not subscribed locally; Syncing state with server anyways. Error: ${err}.`);
+          this.deleteSubscription(id);
+        })
+        .then(() => this.deleteSubscription(id));
     } else {
       this.deleteSubscription(id);
     }
