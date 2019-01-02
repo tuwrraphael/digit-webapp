@@ -2,11 +2,11 @@
   <div class="mdc-toolbar__row">
     <section class="mdc-toolbar__section mdc-toolbar__section--align-start" role="toolbar">
       
-      <a [routerLink]="['/']" class="material-icons mdc-toolbar__menu-icon">menu</a>
+      <a [routerLink]="['/']" class="material-icons mdc-toolbar__menu-icon">schedule</a>
       <span class="mdc-toolbar__title">Digit</span>
     </section>
     <section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
-      <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Watch" [routerLink]="['/me']" alt="Watch">watch</a>
+      <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Settings" [routerLink]="['/me']" alt="Settings">settings</a>
       <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Calendar" [routerLink]="['/calendar/view']" alt="Calendar">event</a>
     </section>
   </div>

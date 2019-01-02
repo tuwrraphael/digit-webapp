@@ -13,7 +13,6 @@ import { CalendarModule } from './calendar/calendar.module';
 
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { HttpClientModule } from '@angular/common/http';
-import { HomeComponent } from './home/home.component';
 
 import { AuthGuard } from './auth-guard';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -22,14 +21,17 @@ import { MeComponent } from './me/me.component';
 import { CommonModule } from '@angular/common';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { PushService } from './api/push.service';
+import { FocusComponent } from './focus/focus.component';
+import { LoginComponent } from './login/login.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
+    LoginComponent,
     MeComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    FocusComponent
   ],
   imports: [
     DeviceModule,

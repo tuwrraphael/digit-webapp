@@ -1,15 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './home/home.component';
 import { MeComponent } from './me/me.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { AuthGuard } from './auth-guard';
+import { LoginComponent } from './login/login.component';
+import { FocusComponent } from './focus/focus.component';
 
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'focus',
     pathMatch: 'full'
   },
   {
@@ -23,11 +24,17 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
-    path: 'home',
-    component: HomeComponent
-  }, {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'focus',
+    component: FocusComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: "**",
-    redirectTo: 'home'
+    redirectTo: 'login'
   }];
 
 @NgModule({
