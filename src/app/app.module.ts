@@ -23,6 +23,10 @@ import { NotificationsComponent } from './notifications/notifications.component'
 import { PushService } from './api/push.service';
 import { FocusComponent } from './focus/focus.component';
 import { LoginComponent } from './login/login.component';
+import { DigitService } from './api/digit.service';
+import { NgxsModule } from '@ngxs/store';
+import { FocusState } from './states/FocusState';
+import { TravelService } from './api/travel.service';
 
 
 @NgModule({
@@ -41,11 +45,16 @@ import { LoginComponent } from './login/login.component';
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     HttpClientModule,
     OAuthModule.forRoot(),
-    CommonModule
+    CommonModule,
+    NgxsModule.forRoot([
+      FocusState
+    ])
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'de' },
     AuthGuard,
     PushService,
+    DigitService,
+    TravelService,
   {
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptor,

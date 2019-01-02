@@ -7,6 +7,7 @@ export const environment = {
   production: false,
   digitServiceUrl: "",
   calendarServiceUrl: "",
+  travelServiceUrl: "",
   identityUrl: "",
   clientId: "",
   vapidPublicKey: "",

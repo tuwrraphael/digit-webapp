@@ -3,6 +3,8 @@ export interface EventData {
   location: LocationData;
   start: Date;
   end: Date;
+  id:string;
+  feedId:string;
 }
 export interface LocationData {
   text: string;

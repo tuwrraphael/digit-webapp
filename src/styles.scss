@@ -3,3 +3,17 @@
 @import '@material/list/mdc-list.scss';
 @import '@material/layout-grid/mdc-layout-grid.scss';
 @import '@material/button/mdc-button.scss';
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+.inline-icon {
+    vertical-align: bottom;
+ }
+
+ ul{
+     margin-top: 0.5em;
+     margin-bottom: .5em;
+ }

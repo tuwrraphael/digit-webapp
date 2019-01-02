@@ -20,7 +20,6 @@ export class AppComponent {
     this.oauthService.setStorage(localStorage);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
     this.oauthService.loadDiscoveryDocumentAndTryLogin().then(function(success) {
-      console.log(success);
       if (success) {
         router.navigate(['/focus']);
       }

@@ -1,3 +1,29 @@
-<p>
-  focus works!
-</p>
+<div class="focus-container">
+  <div *ngFor="let item of focusItems$ | async; index as i" class="focus-item">
+    <div ng-if="item.isEvent">
+
+      <div *ngIf="item.event">
+        <div class="focus-item--heading">
+          <i class="material-icons inline-icon" aria-label="Los um">alarm</i> {{item.indicateTime|date:"shortTime"}}
+          {{item.event ? item.event.subject : "wird geladen"}}
+          ({{item.event.start|date:"shortTime"}} - {{item.event.end | date:"shortTime"}})
+        </div>
+        <div>
+          {{item.event.location.text}}
+        </div>
+      </div>
+      <div class="route" *ngIf="item.directions && item.directions.routes && item.directions.routes.length">
+        <div class="route-step" *ngFor="let step of item.directions.routes[0].steps">
+          <div class="route-step__time-area">
+            <div>{{step.departureTime|date:"shortTime"}} {{step.departureStop.name}}</div>
+            <div class="route-step__line"></div>
+            <div>{{step.arrivalTime|date:"shortTime"}} {{step.arrivalStop.name}}</div>
+          </div>
+          <div class="route-step__summary">
+            <div>mit {{step.line.shortName}} Richtung {{step.headsign}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

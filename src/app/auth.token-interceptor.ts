@@ -16,6 +16,7 @@ export class TokenInterceptor implements HttpInterceptor {
     console.log(request.url);
     if ((request.url.startsWith(environment.calendarServiceUrl) ||
       request.url.startsWith(environment.digitServiceUrl) ||
+      request.url.startsWith(environment.travelServiceUrl) ||
       request.url.startsWith(environment.pushServerUrl)) && this.oauthService.hasValidAccessToken()) {
       request = request.clone({
         setHeaders: {

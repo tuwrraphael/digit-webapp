@@ -29,8 +29,10 @@
     "@material/list": "^0.35.0",
     "@material/toolbar": "^0.35.0",
     "@material/typography": "^0.35.0",
+    "@ngxs/store": "^3.3.4",
     "angular-oauth2-oidc": "^5.0.2",
     "core-js": "^2.4.1",
+    "lodash-es": "^4.17.11",
     "npm": "^6.5.0",
     "rxjs": "^6.3.3",
     "zone.js": "^0.8.26"
@@ -42,6 +44,7 @@
     "@angular/language-service": "7.1.4",
     "@types/jasmine": "~2.8.3",
     "@types/jasminewd2": "~2.0.2",
+    "@types/lodash-es": "^4.17.1",
     "@types/node": "~6.0.60",
     "codelyzer": "^4.5.0",
     "jasmine-core": "~2.8.0",

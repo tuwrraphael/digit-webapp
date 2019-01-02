@@ -1,0 +1,42 @@
+@import "container/container-mixins.scss";
+.focus-container {
+    max-width: 60em;
+    margin: auto;
+}
+
+.focus-item {
+    &--heading {
+        font-size: 1.2em;
+    }
+    border-bottom: 1px solid lightgray;
+    padding-top: 1em;
+    padding-bottom: 1em;
+}
+.route {
+    margin-left: 1em;
+    margin-top: 1em;
+}
+.route-step {
+    &__line {
+        flex-grow: 1;
+        width: .3em;
+        background-color: lightblue;
+        margin: .1em 2em .2em;
+        border-radius: .3em;
+        position: relative;
+    }
+    &__time-area {
+        flex-grow: 0;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        width: 12em;
+    }
+    &__summary {
+        min-height: 8em;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    display: flex;
+}
