@@ -59,7 +59,15 @@ export class FocusState {
 
     @Action(LoadCalendarEvents)
     async loadCalendarEvents(ctx: StateContext<FocusStateModel>, action: LoadCalendarEvents) {
-        var evtData = await Promise.all(action.eventIds.map(evt => this.calendarService.getEvent(evt.feedId, evt.eventId).toPromise()));
+        var evtData: EventData[] = [];
+        for (var evt of action.eventIds) {
+            try {
+                evtData.push(await this.calendarService.getEvent(evt.feedId, evt.eventId).toPromise());
+            }
+            catch {
+
+            }
+        }
         const state = ctx.getState();
         ctx.setState({
             ...state,
@@ -73,7 +81,12 @@ export class FocusState {
             [key: string]: TransitDirections
         } = {};
         for (var key of action.directionKeys) {
+            try {
             directions[key] = await this.travelService.getDirections(key).toPromise();
+            }
+            catch{
+                
+            }
         }
         const state = ctx.getState();
         console.log(directions);
