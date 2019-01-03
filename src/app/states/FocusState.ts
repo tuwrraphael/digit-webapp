@@ -13,6 +13,11 @@ export class LoadFocus {
     constructor() { }
 }
 
+export class PatchFocus {
+    static readonly type = "[Focus] Patch";
+    constructor() { }
+}
+
 export class LoadCalendarEvents {
     static readonly type = "[Calendar] Load Event";
     constructor(public eventIds: { eventId: string, feedId: string }[]) { }
@@ -25,6 +30,10 @@ export class LoadDirections {
 
 export interface FocusStateModel {
     focusItems: FocusItem[];
+    focusItemsLoaded: boolean;
+    focusItemsLoading: boolean;
+    directionsLoading: boolean;
+    calendarEventsLoading: boolean;
     calendarItems: EventData[];
     directions: {
         [key: string]: TransitDirections
@@ -36,7 +45,11 @@ export interface FocusStateModel {
     defaults: {
         focusItems: [],
         calendarItems: [],
-        directions: {}
+        directions: {},
+        focusItemsLoaded: false,
+        focusItemsLoading: false,
+        directionsLoading: false,
+        calendarEventsLoading: false
     }
 })
 export class FocusState {
@@ -45,11 +58,38 @@ export class FocusState {
 
     @Action(LoadFocus)
     loadFocus(ctx: StateContext<FocusStateModel>, action: LoadFocus) {
+        const state = ctx.getState();
+        ctx.setState({
+            ...state,
+            focusItemsLoading: true
+        });
         return this.digitService.getFocus().pipe(tap((items) => {
             const state = ctx.getState();
             ctx.setState({
                 ...state,
-                focusItems: items
+                focusItems: items,
+                focusItemsLoading: false,
+                focusItemsLoaded: true
+            });
+        }),
+            tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
+            mergeMap((items) => ctx.dispatch(new LoadDirections(items.map(v => v.directionsKey)))),
+        );
+    }
+
+    @Action(PatchFocus)
+    patchFocus(ctx: StateContext<FocusStateModel>, action: PatchFocus) {
+        const state = ctx.getState();
+        ctx.setState({
+            ...state,
+            focusItemsLoading: true
+        });
+        return this.digitService.patchFocus().pipe(tap((items) => {
+            const state = ctx.getState();
+            ctx.setState({
+                ...state,
+                focusItems: items,
+                focusItemsLoading: false
             });
         }),
             tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
@@ -59,6 +99,10 @@ export class FocusState {
 
     @Action(LoadCalendarEvents)
     async loadCalendarEvents(ctx: StateContext<FocusStateModel>, action: LoadCalendarEvents) {
+        ctx.setState({
+            ...ctx.getState(),
+            calendarEventsLoading: true
+        });
         var evtData: EventData[] = [];
         for (var evt of action.eventIds) {
             try {
@@ -71,21 +115,27 @@ export class FocusState {
         const state = ctx.getState();
         ctx.setState({
             ...state,
-            calendarItems: unionBy(evtData, state.calendarItems, v => { return { feedId: v.feedId, id: v.id } })
+            calendarItems: unionBy(evtData, state.calendarItems, v => { return { feedId: v.feedId, id: v.id } }),
+            calendarEventsLoading: false
         });
     }
 
     @Action(LoadDirections)
     async loadDirections(ctx: StateContext<FocusStateModel>, action: LoadDirections) {
+        ctx.setState({
+            ...ctx.getState(),
+            directionsLoading: true
+        });
+        var directionErrors = false;
         var directions: {
             [key: string]: TransitDirections
         } = {};
         for (var key of action.directionKeys) {
             try {
-            directions[key] = await this.travelService.getDirections(key).toPromise();
+                directions[key] = await this.travelService.getDirections(key).toPromise();
             }
             catch{
-                
+                directionErrors = true;
             }
         }
         const state = ctx.getState();
@@ -95,8 +145,22 @@ export class FocusState {
             directions: {
                 ...state.directions,
                 ...directions
-            }
+            },
+            directionsLoading: false
         });
+        if (directionErrors) {
+            await ctx.dispatch(new PatchFocus()).toPromise();
+        }
+    }
+
+    @Selector()
+    static focusItemsLoading(state: FocusStateModel): boolean {
+        return state.focusItemsLoading || state.directionsLoading || state.calendarEventsLoading;
+    }
+
+    @Selector()
+    static focusItemsLoaded(state: FocusStateModel): boolean {
+        return state.focusItemsLoaded;
     }
 
     @Selector()

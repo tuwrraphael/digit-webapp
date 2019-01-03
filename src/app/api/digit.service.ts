@@ -13,9 +13,18 @@ export class DigitService {
         return this.httpClient.get<FocusItem[]>(`${environment.digitServiceUrl}/api/me/focus`).pipe(map(data => {
             var items = <FocusItem[]>data;
             items.forEach(v => {
-              v.indicateTime = new Date(v.indicateTime);
+                v.indicateTime = new Date(v.indicateTime);
             });
             return items;
-          }));
+        }));
+    }
+    patchFocus() {
+        return this.httpClient.patch<FocusItem[]>(`${environment.digitServiceUrl}/api/me/focus`, {}).pipe(map(data => {
+            var items = <FocusItem[]>data;
+            items.forEach(v => {
+                v.indicateTime = new Date(v.indicateTime);
+            });
+            return items;
+        }));
     }
 }

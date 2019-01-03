@@ -1,7 +1,6 @@
 <div class="focus-container">
-  <div *ngFor="let item of focusItems$ | async; index as i" class="focus-item">
+  <div *ngFor=" let item of focusItems$ | async; index as i" class="focus-item">
     <div ng-if="item.isEvent">
-
       <div *ngIf="item.event">
         <div class="focus-item--heading">
           <i class="material-icons inline-icon" aria-label="Los um">alarm</i> {{item.indicateTime|date:"shortTime"}}
@@ -26,4 +25,18 @@
       </div>
     </div>
   </div>
+  <div  *ngIf="!(focusItemsLoading$|async) && !((focusItems$ | async).length)">
+    keine aktuellen Ereignisse
+  </div>
+  <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate" *ngIf="(focusItemsLoading$|async)">
+    <div class="mdc-linear-progress__buffering-dots"></div>
+    <div class="mdc-linear-progress__buffer"></div>
+    <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+      <span class="mdc-linear-progress__bar-inner"></span>
+    </div>
+    <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+      <span class="mdc-linear-progress__bar-inner"></span>
+    </div>
+  </div>
+  <button class="mdc-button mdc-button--raised" (click)="patchFocus()"><i class="material-icons">refresh</i>Aktualisieren</button>
 </div>
