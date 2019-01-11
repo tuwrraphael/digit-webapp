@@ -22,6 +22,6 @@ export class FocusComponent implements OnInit {
   }
 
   patchFocus() {
-    this.store.dispatch(new PatchFocus());
+    this.store.dispatch(new PatchFocus(true));
   }
 }

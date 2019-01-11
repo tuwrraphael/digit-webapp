@@ -11,6 +11,9 @@
           {{item.event.location.text}}
         </div>
       </div>
+      <div *ngIf="!item.directionsFound" class="focus-item__no-directions">
+          {{(item.event.location.text || item.event.location.address) ? "keine Routen gefunden" : "kein Zielort angegeben"}} 
+      </div>
       <div class="route" *ngIf="item.directions && item.directions.routes && item.directions.routes.length">
         <div class="route-step" *ngFor="let step of item.directions.routes[0].steps">
           <div class="route-step__time-area">

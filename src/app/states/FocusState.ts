@@ -15,7 +15,7 @@ export class LoadFocus {
 
 export class PatchFocus {
     static readonly type = "[Focus] Patch";
-    constructor() { }
+    constructor(public force:boolean) { }
 }
 
 export class LoadCalendarEvents {
@@ -34,6 +34,7 @@ export interface FocusStateModel {
     focusItemsLoading: boolean;
     directionsLoading: boolean;
     calendarEventsLoading: boolean;
+    patchedAt: Date;
     calendarItems: EventData[];
     directions: {
         [key: string]: TransitDirections
@@ -49,7 +50,8 @@ export interface FocusStateModel {
         focusItemsLoaded: false,
         focusItemsLoading: false,
         directionsLoading: false,
-        calendarEventsLoading: false
+        calendarEventsLoading: false,
+        patchedAt : null
     }
 })
 export class FocusState {
@@ -73,13 +75,16 @@ export class FocusState {
             });
         }),
             tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
-            mergeMap((items) => ctx.dispatch(new LoadDirections(items.map(v => v.directionsKey)))),
+            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)))),
         );
     }
 
     @Action(PatchFocus)
     patchFocus(ctx: StateContext<FocusStateModel>, action: PatchFocus) {
         const state = ctx.getState();
+        if (!action.force && state.patchedAt && ((+new Date() - +state.patchedAt) < 1000*60)) {
+            return false;
+        }
         ctx.setState({
             ...state,
             focusItemsLoading: true
@@ -89,11 +94,12 @@ export class FocusState {
             ctx.setState({
                 ...state,
                 focusItems: items,
-                focusItemsLoading: false
+                focusItemsLoading: false,
+                patchedAt: new Date()
             });
         }),
             tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
-            mergeMap((items) => ctx.dispatch(new LoadDirections(items.map(v => v.directionsKey)))),
+            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)))),
         );
     }
 
@@ -149,7 +155,7 @@ export class FocusState {
             directionsLoading: false
         });
         if (directionErrors) {
-            await ctx.dispatch(new PatchFocus()).toPromise();
+            await ctx.dispatch(new PatchFocus(false)).toPromise();
         }
     }
 
@@ -175,7 +181,8 @@ export class FocusState {
                 isEvent: isEvent,
                 isLoading: isEvent && null == event,
                 event: event,
-                directions: directions
+                directions: directions,
+                directionsFound: !!item.directionsKey
             }
         }).sort(v => (+v.indicateTime) * -1);
     }
