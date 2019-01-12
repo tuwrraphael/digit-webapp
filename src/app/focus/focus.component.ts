@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FocusDisplay } from '../model/FocusItem';
+import { FocusDisplay, FocusItem } from '../model/FocusItem';
 import { Store, Select } from '@ngxs/store';
 import { LoadFocus, FocusState, PatchFocus } from '../states/FocusState';
 import { Observable, Subscription } from 'rxjs';
@@ -23,5 +23,11 @@ export class FocusComponent implements OnInit {
 
   patchFocus() {
     this.store.dispatch(new PatchFocus(true));
+  }
+  showOffset(item: FocusDisplay) {
+    return item.late && Math.abs(item.late) > 60000;
+  }
+  isLate(item: FocusDisplay) {
+    return item.late && item.late > 60000;
   }
 }

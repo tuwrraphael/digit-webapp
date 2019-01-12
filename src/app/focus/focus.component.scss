@@ -6,8 +6,11 @@
 }
 
 .focus-item {
-    &--heading {
+    &__heading {
         font-size: 1.2em;
+        &--late {
+            color: red;
+        }
     }
     border-bottom: 1px solid lightgray;
     padding-top: 1em;

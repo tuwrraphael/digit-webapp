@@ -15,7 +15,7 @@ export class LoadFocus {
 
 export class PatchFocus {
     static readonly type = "[Focus] Patch";
-    constructor(public force:boolean) { }
+    constructor(public force: boolean) { }
 }
 
 export class LoadCalendarEvents {
@@ -51,7 +51,7 @@ export interface FocusStateModel {
         focusItemsLoading: false,
         directionsLoading: false,
         calendarEventsLoading: false,
-        patchedAt : null
+        patchedAt: null
     }
 })
 export class FocusState {
@@ -82,7 +82,7 @@ export class FocusState {
     @Action(PatchFocus)
     patchFocus(ctx: StateContext<FocusStateModel>, action: PatchFocus) {
         const state = ctx.getState();
-        if (!action.force && state.patchedAt && ((+new Date() - +state.patchedAt) < 1000*60)) {
+        if (!action.force && state.patchedAt && ((+new Date() - +state.patchedAt) < 1000 * 60)) {
             return false;
         }
         ctx.setState({
@@ -175,6 +175,7 @@ export class FocusState {
             var isEvent = !!(item.calendarEventId && item.calendarEventFeedId);
             var event = isEvent ? state.calendarItems.find(v => v.id == item.calendarEventId && v.feedId == item.calendarEventFeedId) : null;
             var directions = item.directionsKey ? state.directions[item.directionsKey] : null;
+            let late = event && directions ? +directions.routes[0].arrivalTime - +event.start : null;
             return {
                 id: item.id,
                 indicateTime: item.indicateTime,
@@ -182,7 +183,8 @@ export class FocusState {
                 isLoading: isEvent && null == event,
                 event: event,
                 directions: directions,
-                directionsFound: !!item.directionsKey
+                directionsFound: !!item.directionsKey,
+                late: late
             }
         }).sort(v => (+v.indicateTime) * -1);
     }

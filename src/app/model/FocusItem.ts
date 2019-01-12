@@ -16,5 +16,6 @@ export interface FocusDisplay {
     id: string;
     indicateTime: Date;
     directions: TransitDirections;
-    directionsFound:boolean;
+    directionsFound: boolean;
+    late: number;
 }
