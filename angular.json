@@ -24,7 +24,8 @@
             },
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "src/manifest.json"
             ],
             "styles": [
               "src/styles.scss"
@@ -43,7 +44,6 @@
               "vendorChunk": false,
               "buildOptimizer": true,
               "serviceWorker": true,
-              "ngswConfigPath": "src/ngsw-config.json",
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -53,7 +53,8 @@
               "i18nFile": "src/locale/messages.de.xlf",
               "i18nFormat": "xlf",
               "i18nLocale": "de",
-              "i18nMissingTranslation": "error"
+              "i18nMissingTranslation": "error",
+              "ngswConfigPath": "src/ngsw-config.json"
             },
             "swTest": {
               "fileReplacements": [
@@ -65,9 +66,7 @@
               "i18nFile": "src/locale/messages.de.xlf",
               "i18nFormat": "xlf",
               "i18nLocale": "de",
-              "i18nMissingTranslation": "error",
-              "serviceWorker": true,
-              "ngswConfigPath": "src/ngsw-config.json"
+              "i18nMissingTranslation": "error"
             },
             "azure": {
               "fileReplacements": [
@@ -116,7 +115,8 @@
             ],
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "src/manifest.json"
             ]
           }
         },

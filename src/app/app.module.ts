@@ -42,13 +42,13 @@ import { TravelService } from './api/travel.service';
     CalendarModule,
     BrowserModule,
     AppRoutingModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
     HttpClientModule,
     OAuthModule.forRoot(),
     CommonModule,
     NgxsModule.forRoot([
       FocusState
-    ])
+    ]),
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'de' },
     AuthGuard,
