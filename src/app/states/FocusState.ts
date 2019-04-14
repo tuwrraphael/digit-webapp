@@ -7,9 +7,22 @@ import { EventData } from '../calendar/model/event';
 import unionBy from 'lodash-es/unionBy';
 import { TravelService } from '../api/travel.service';
 import { TransitDirections } from '../model/TransitDirections';
+import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr';
+import { environment } from '../../environments/environment';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 export class LoadFocus {
     static readonly type = "[Focus] Load";
+    constructor() { }
+}
+
+export class ConnectFocusHub {
+    static readonly type = "[Focus] Connect Hub";
+    constructor() { }
+}
+
+export class DisconnectFocusHub {
+    static readonly type = "[Focus] Disconnect Hub";
     constructor() { }
 }
 
@@ -39,6 +52,7 @@ export interface FocusStateModel {
     directions: {
         [key: string]: TransitDirections
     };
+    hubConnection: HubConnection;
 }
 
 @State<FocusStateModel>({
@@ -51,12 +65,13 @@ export interface FocusStateModel {
         focusItemsLoading: false,
         directionsLoading: false,
         calendarEventsLoading: false,
-        patchedAt: null
+        patchedAt: null,
+        hubConnection: null
     }
 })
 export class FocusState {
     constructor(private digitService: DigitService, private calendarService: CalendarService,
-        private travelService: TravelService) { }
+        private travelService: TravelService, private oauthService: OAuthService) { }
 
     @Action(LoadFocus)
     loadFocus(ctx: StateContext<FocusStateModel>, action: LoadFocus) {
@@ -77,6 +92,38 @@ export class FocusState {
             tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
             mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)))),
         );
+    }
+
+    @Action(ConnectFocusHub)
+    connectFocusHub(ctx: StateContext<FocusStateModel>, action: ConnectFocusHub) {
+        const state = ctx.getState();
+        if (state.hubConnection) {
+            state.hubConnection.stop();
+        }
+        let connection = new HubConnectionBuilder()
+            .withUrl(`${environment.digitServiceUrl}/hubs/focus`, { accessTokenFactory: () => this.oauthService.getAccessToken() })
+            .build();
+        connection.on("focusChanged", items => {
+            ctx.setState({
+                ...ctx.getState(),
+                focusItems: items
+            });
+            ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })));
+            ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)));
+        });
+        connection.start();
+    }
+
+    @Action(DisconnectFocusHub)
+    disconnectFocusHub(ctx: StateContext<FocusStateModel>, action: DisconnectFocusHub) {
+        const state = ctx.getState();
+        if (state.hubConnection) {
+            state.hubConnection.stop();
+            ctx.setState({
+                ...state,
+                hubConnection: null
+            });
+        }
     }
 
     @Action(PatchFocus)

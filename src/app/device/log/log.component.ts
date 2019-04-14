@@ -9,6 +9,7 @@ import { environment } from '../../../environments/environment';
 import { LogEntry } from './log-entry';
 
 import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-log',
@@ -17,7 +18,8 @@ import { HubConnection, HubConnectionBuilder } from '@aspnet/signalr';
 })
 export class LogComponent implements OnInit, OnDestroy {
 
-  constructor(private activatedRoute: ActivatedRoute, private http: HttpClient) { }
+  constructor(private activatedRoute: ActivatedRoute, private http: HttpClient,
+    private oauthService: OAuthService) { }
 
   deviceId: string;
   log: LogEntry[];
@@ -38,7 +40,7 @@ export class LogComponent implements OnInit, OnDestroy {
         this.connection.stop();
       }
       this.connection = new HubConnectionBuilder()
-        .withUrl(`${environment.digitServiceUrl}/log`)
+        .withUrl(`${environment.digitServiceUrl}/hubs/log`,  { accessTokenFactory: () => this.oauthService.getAccessToken() })
         .build();
       this.connection.on("log", data => {
         this.log.unshift(data);

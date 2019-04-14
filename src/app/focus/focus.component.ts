@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FocusDisplay, FocusItem } from '../model/FocusItem';
 import { Store, Select } from '@ngxs/store';
-import { LoadFocus, FocusState, PatchFocus } from '../states/FocusState';
+import { LoadFocus, FocusState, PatchFocus, ConnectFocusHub, DisconnectFocusHub } from '../states/FocusState';
 import { Observable, Subscription } from 'rxjs';
 
 @Component({
@@ -9,7 +9,10 @@ import { Observable, Subscription } from 'rxjs';
   templateUrl: './focus.component.html',
   styleUrls: ['./focus.component.scss']
 })
-export class FocusComponent implements OnInit {
+export class FocusComponent implements OnInit, OnDestroy {
+  ngOnDestroy(): void {
+    this.store.dispatch(new DisconnectFocusHub());
+  }
 
   @Select(FocusState.focusItems) focusItems$: Observable<FocusDisplay[]>;
   @Select(FocusState.focusItemsLoading) focusItemsLoading$: Observable<boolean>;
@@ -19,6 +22,7 @@ export class FocusComponent implements OnInit {
 
   ngOnInit() {
     this.store.dispatch(new LoadFocus());
+    this.store.dispatch(new ConnectFocusHub());
   }
 
   patchFocus() {
