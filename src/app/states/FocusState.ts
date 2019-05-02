@@ -10,6 +10,8 @@ import { TransitDirections } from '../model/TransitDirections';
 import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr';
 import { environment } from '../../environments/environment';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { startOfToday, endOfToday, startOfTomorrow, endOfTomorrow, isAfter } from 'date-fns';
+import { loadInternal } from '@angular/core/src/render3/util';
 
 export class LoadFocus {
     static readonly type = "[Focus] Load";
@@ -34,6 +36,11 @@ export class PatchFocus {
 export class LoadCalendarEvents {
     static readonly type = "[Calendar] Load Event";
     constructor(public eventIds: { eventId: string, feedId: string }[]) { }
+}
+
+export class LoadCalendarView {
+    static readonly type = "[Calendar] Load View";
+    constructor(public from: Date, public to: Date) { }
 }
 
 export class LoadDirections {
@@ -173,6 +180,16 @@ export class FocusState {
         });
     }
 
+    @Action(LoadCalendarView)
+    async loadCalendarView(ctx: StateContext<FocusStateModel>, action: LoadCalendarView) {
+        let data = await this.calendarService.getEvents(action.from, action.to).toPromise();
+        const state = ctx.getState();
+        ctx.setState({
+            ...state,
+            calendarItems: unionBy(state.calendarItems, data, v => { return { feedId: v.feedId, id: v.id } }),
+        });
+    }
+
     @Action(LoadDirections)
     async loadDirections(ctx: StateContext<FocusStateModel>, action: LoadDirections) {
         ctx.setState({
@@ -185,7 +202,7 @@ export class FocusState {
         } = {};
         for (var key of action.directionKeys) {
             try {
-                directions[key] = await this.travelService.getDirections(key).toPromise();
+                directions[key] = await this.travelService.getDirectionsByKey(key).toPromise();
             }
             catch{
                 directionErrors = true;

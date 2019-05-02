@@ -9,7 +9,7 @@ export interface EventData {
 export interface LocationData {
   text: string;
   id: string;
-  geoCoordinate: GeoCoordinate;
+  coordinate: GeoCoordinate;
   address: AddressData;
 }
 export interface GeoCoordinate {

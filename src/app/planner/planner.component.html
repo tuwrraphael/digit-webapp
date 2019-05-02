@@ -1,0 +1,42 @@
+<div *ngIf="(todayEvents$ | async).length">
+  <h2 class="mdc-typography--headline4">Heute</h2>
+  <div *ngFor=" let item of todayEvents$ | async; index as i" class="focus-item">
+    <div ng-if="item.isEvent">
+      <div *ngIf="item.event">
+        <div class="focus-item__heading">
+          <span [ngClass]="{'focus-item__heading--late' : isLate(item)}">
+            <i class="material-icons inline-icon" aria-label="Los um">alarm</i>
+            {{item.indicateTime|date:"shortTime"}}
+          </span>
+          {{item.event ? item.event.subject : "wird geladen"}}
+          ({{item.event.start|date:"shortTime"}} - {{item.event.end | date:"shortTime"}})
+        </div>
+        <div>
+          {{item.event.location.text}}
+        </div>
+      </div>
+      <div *ngIf="!item.directionsFound" class="focus-item__no-directions">
+        {{(item.event.location.text || item.event.location.address) ? "keine Routen gefunden" : "kein Zielort
+        angegeben"}}
+      </div>
+      <div class="route" *ngIf="item.directions && item.directions.routes && item.directions.routes.length">
+        <div class="route-step" *ngFor="let step of item.directions.routes[0].steps">
+          <div class="route-step__time-area">
+            <div>{{step.departureTime|date:"shortTime"}} {{step.departureStop.name}}</div>
+            <div class="route-step__line"></div>
+            <div>{{step.arrivalTime|date:"shortTime"}} {{step.arrivalStop.name}}</div>
+          </div>
+          <div class="route-step__summary">
+            <div>mit {{step.line.shortName}} Richtung {{step.headsign}}</div>
+          </div>
+        </div>
+        <div>Ankunft: {{item.directions.routes[0].arrivalTime | date:"shortTime"}} <span *ngIf="showOffset(item)">({{item.late/1000/60|number:'1.0-0'}} Minuten {{item.late > 0 ? "verspätet" : "vorher"}})</span></div>
+      </div>
+      
+    </div>
+  </div>
+</div>
+<div *ngIf="(tomorrowEvents$ | async).length">
+  <h2 class="mdc-typography--headline4">Morgen</h2>
+  {{tomorrowEvents$ | async | json}}
+</div>

@@ -1,7 +1,7 @@
 
 import { map } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { CalendarConfiguration } from '../model/calendar-conifguration';
 import { Feed } from '../model/feed';
@@ -19,8 +19,17 @@ export class CalendarService {
     return v;
   }
 
-  getEvents() {
-    return this.httpClient.get(`${environment.calendarServiceUrl}/api/calendar/me`).pipe(map(data => {
+  getEvents(from?: Date, to?: Date) {
+    let params = new HttpParams();
+    if (null != from) {
+      params = params.set("from", from.toISOString());
+    }
+    if (null != to) {
+      params = params.set("to", to.toISOString());
+    }
+    return this.httpClient.get(`${environment.calendarServiceUrl}/api/calendar/me`, {
+      params
+    }).pipe(map(data => {
       var events = <EventData[]>data;
       events.forEach(this.mapEvt);
       return events;

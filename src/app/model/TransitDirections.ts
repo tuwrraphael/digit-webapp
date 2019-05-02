@@ -5,10 +5,11 @@ export interface Route {
     steps: Step[];
     depatureTime: Date;
     arrivalTime: Date;
+    duration: number;
 }
 export interface Step {
     arrivalStop: Stop;
-    departureStop:Stop;
+    departureStop: Stop;
     arrivalTime: Date;
     departureTime: Date;
     headsign: string;
@@ -26,7 +27,12 @@ export interface Coordinate {
 }
 
 export interface Line {
-    Name: string;
-    ShortName: string;
-    VehicleType: string;
+    name: string;
+    shortName: string;
+    vehicleType: string;
+}
+
+export interface DirectionsResponse {
+    key: string;
+    directions: TransitDirections;
 }

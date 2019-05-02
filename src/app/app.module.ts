@@ -27,6 +27,7 @@ import { DigitService } from './api/digit.service';
 import { NgxsModule } from '@ngxs/store';
 import { FocusState } from './states/FocusState';
 import { TravelService } from './api/travel.service';
+import { PlannerComponent } from './planner/planner.component';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { TravelService } from './api/travel.service';
     LoginComponent,
     MeComponent,
     NotificationsComponent,
-    FocusComponent
+    FocusComponent,
+    PlannerComponent
   ],
   imports: [
     DeviceModule,
