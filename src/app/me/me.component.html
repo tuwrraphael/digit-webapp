@@ -85,8 +85,8 @@
         <tr>
           <td>Verbindung eingerichtet</td>
           <td>
-            <span *ngIf="userInfo && userInfo.pushChannelRegistered">Ja</span>
-            <span *ngIf="userInfo && !userInfo.pushChannelRegistered">Nein. Melde dich in der App an um das Problem zu beheben.</span>
+            <!-- <span *ngIf="userInfo && userInfo.pushChannelRegistered">Ja</span>
+            <span *ngIf="userInfo && !userInfo.pushChannelRegistered">Nein. Melde dich in der App an um das Problem zu beheben.</span> -->
           </td>
         </tr>
       </tbody>
@@ -98,12 +98,12 @@
       Kalender
       <span *ngIf="calendarIncomplete" class="mdc-typography--caption">(unvollständig)</span>
     </h2>
-    <span *ngIf="userInfo && !userInfo.calendarReminderActive">
+    <!-- <span *ngIf="userInfo && !userInfo.calendarReminderActive">
       Es wurde ein Fehler bei der Verbindung mit dem Kalender festgestellt.
       <span *ngIf="'running' == maintainance">
         Das Problem wird durch die automatische Wartung behoben.
       </span>
-    </span>
+    </span> -->
     <div *ngIf="null != subscribedFeeds">
       Es
       <span [ngPlural]="subscribedFeeds">
