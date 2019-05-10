@@ -28,6 +28,8 @@ import { NgxsModule } from '@ngxs/store';
 import { FocusState } from './states/FocusState';
 import { TravelService } from './api/travel.service';
 import { PlannerComponent } from './planner/planner.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatSidenavModule, MatSnackBarModule} from '@angular/material';
 
 
 @NgModule({
@@ -45,6 +47,9 @@ import { PlannerComponent } from './planner/planner.component';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
+    BrowserAnimationsModule,
+    MatSidenavModule,
+    MatSnackBarModule,
     OAuthModule.forRoot(),
     CommonModule,
     NgxsModule.forRoot([

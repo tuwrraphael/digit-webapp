@@ -2,9 +2,7 @@
 @import "theme.scss";
 
 .overview-container {
-  @include container-width();
-  margin:auto;
-  padding:16px;
+  @include container();
 }
 .overview-table {
   td:first-of-type{

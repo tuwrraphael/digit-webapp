@@ -1,14 +1,68 @@
-<header class="mdc-toolbar mdc-toolbar--fixed">
-  <div class="mdc-toolbar__row">
-    <section class="mdc-toolbar__section mdc-toolbar__section--align-start" role="toolbar">
-      
-      <a [routerLink]="['/']" class="material-icons mdc-toolbar__menu-icon">schedule</a>
-      <span class="mdc-toolbar__title">Digit</span>
-    </section>
-    <section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
-      <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Settings" [routerLink]="['/me']" alt="Settings">settings</a>
-      <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Calendar" [routerLink]="['/calendar/view']" alt="Calendar">event</a>
-    </section>
-  </div>
-</header>
-<main class="mdc-toolbar-fixed-adjust"><router-outlet></router-outlet></main>
+<mat-sidenav-container class="app-container" [hasBackdrop]="mobileQuery.matches">
+  <mat-sidenav #sidenav [mode]="mobileQuery.matches ? 'over' : 'side'" [opened]="!mobileQuery.matches && isLoggedIn">
+    <aside class="mdc-drawer">
+      <div class="mdc-drawer__header">
+        <h3 class="mdc-drawer__title">Digit</h3>
+        <!-- <h6 class="mdc-drawer__subtitle">email@material.io</h6> -->
+      </div>
+      <div class="mdv-drawer__content">
+        <nav class="mdc-list" *ngIf="isLoggedIn">
+          <hr class="mdc-list-divider" />
+          <a routerLink="focus" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+            Jetzt
+          </a>
+          <a routerLink="planner" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+              Planungsansicht
+            </a>
+          <hr class="mdc-list-divider" />
+          <h6 class="mdc-list-group__subheader">Einstellungen</h6>
+          <a routerLink="me" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+            <i class="material-icons mdc-button__icon">settings</i>
+            Übersicht
+          </a>
+          <a routerLink="calendar/configure" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+            <i class="material-icons mdc-button__icon">event</i>
+            Kalender
+          </a>
+          <a routerLink="notifications" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+            <i class="material-icons mdc-button__icon">notifications</i>
+            Benachrichtigungen
+          </a>
+          <hr class="mdc-list-divider" />
+          <h6 class="mdc-list-group__subheader">Tools</h6>
+          <a routerLink="/device/12345/log" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+            <i class="material-icons mdc-button__icon">list</i>
+            Log
+          </a>
+          <a routerLink="/calendar/view" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+            <i class="material-icons mdc-button__icon">event</i>
+            Kalender-Debugger
+          </a>
+        </nav>
+      </div>
+    </aside>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <!-- <header class="mdc-toolbar mdc-toolbar--fixed">
+      <div class="mdc-toolbar__row">
+        <section class="mdc-toolbar__section mdc-toolbar__section--align-start" role="toolbar">
+          <a [routerLink]="['/']" class="material-icons mdc-toolbar__menu-icon">schedule</a>
+          <span class="mdc-toolbar__title">Digit</span>
+        </section>
+        <section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
+          <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Settings" [routerLink]="['/me']"
+            alt="Settings">settings</a>
+          <a *ngIf="isLoggedIn" class="material-icons mdc-toolbar__icon" aria-label="Calendar"
+            [routerLink]="['/planner']" alt="Planner">event</a>
+        </section>
+      </div>
+    </header> -->
+    <button id="open-navidation" class="mdc-icon-button" aria-label="Navigation öffnen" aria-hidden="true"
+      (click)="sidenav.toggle()" *ngIf="mobileQuery.matches">
+      <i class="material-icons mdc-icon-button__icon">menu</i>
+    </button>
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

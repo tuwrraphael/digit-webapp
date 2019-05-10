@@ -3,7 +3,10 @@
 @import '@material/list/mdc-list.scss';
 @import '@material/layout-grid/mdc-layout-grid.scss';
 @import '@material/button/mdc-button.scss';
+@import '@material/drawer/mdc-drawer.scss';
+@import '@material/icon-button/mdc-icon-button.scss';
 @import '@material/linear-progress/mdc-linear-progress.scss';
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 
 body {
     padding: 0;

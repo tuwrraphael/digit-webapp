@@ -14,7 +14,7 @@ export class FocusComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DisconnectFocusHub());
   }
 
-  @Select(FocusState.focusItems) focusItems$: Observable<FocusDisplay[]>;
+  @Select(FocusState.activeFocusItems) focusItems$: Observable<FocusDisplay[]>;
   @Select(FocusState.focusItemsLoading) focusItemsLoading$: Observable<boolean>;
   @Select(FocusState.focusItemsLoaded) focusItemsLoaded$: Observable<boolean>;
 

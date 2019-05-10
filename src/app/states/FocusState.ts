@@ -1,5 +1,6 @@
 import { State, Action, StateContext, Selector } from '@ngxs/store';
-import { tap, mergeMap } from 'rxjs/operators';
+import { tap, mergeMap, catchError, map } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 import { DigitService } from '../api/digit.service';
 import { FocusItem, FocusDisplay } from '../model/FocusItem';
 import { CalendarService } from '../calendar/api/calendar.service';
@@ -10,8 +11,9 @@ import { TransitDirections } from '../model/TransitDirections';
 import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr';
 import { environment } from '../../environments/environment';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { startOfToday, endOfToday, startOfTomorrow, endOfTomorrow, isAfter } from 'date-fns';
-import { loadInternal } from '@angular/core/src/render3/util';
+import { addHours } from 'date-fns';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {MatSnackBar, MatSortModule} from '@angular/material';
 
 export class LoadFocus {
     static readonly type = "[Focus] Load";
@@ -48,6 +50,31 @@ export class LoadDirections {
     constructor(public directionKeys: string[]) { }
 }
 
+export class LoadPlan {
+    static readonly type = "[Focus] Load Plan";
+    constructor(public from: Date, public to: Date) { }
+}
+
+export class LoadUser {
+    static readonly type = "[App] Load User";
+    constructor() { }
+}
+
+export class CreateUser {
+    static readonly type = "[App] Create User";
+    constructor() { }
+}
+
+export class PatchUser {
+    static readonly type = "[App] Patch User";
+    constructor() { }
+}
+
+interface UserInformation {
+    pushChannelRegistered: string;
+    calendarReminderActive: string;
+}
+
 export interface FocusStateModel {
     focusItems: FocusItem[];
     focusItemsLoaded: boolean;
@@ -60,6 +87,7 @@ export interface FocusStateModel {
         [key: string]: TransitDirections
     };
     hubConnection: HubConnection;
+    userInformation: UserInformation;
 }
 
 @State<FocusStateModel>({
@@ -73,12 +101,15 @@ export interface FocusStateModel {
         directionsLoading: false,
         calendarEventsLoading: false,
         patchedAt: null,
-        hubConnection: null
+        hubConnection: null,
+        userInformation: null
     }
 })
 export class FocusState {
     constructor(private digitService: DigitService, private calendarService: CalendarService,
-        private travelService: TravelService, private oauthService: OAuthService) { }
+        private travelService: TravelService, private oauthService: OAuthService,
+        private httpClient: HttpClient,
+        private matSnackBar: MatSnackBar) { }
 
     @Action(LoadFocus)
     loadFocus(ctx: StateContext<FocusStateModel>, action: LoadFocus) {
@@ -87,11 +118,12 @@ export class FocusState {
             ...state,
             focusItemsLoading: true
         });
+        let now = new Date();
         return this.digitService.getFocus().pipe(tap((items) => {
             const state = ctx.getState();
             ctx.setState({
                 ...state,
-                focusItems: items,
+                focusItems: unionBy(state.focusItems.filter(i => !(i.start < addHours(now, 2) && now < i.end)), items, i => i.id),
                 focusItemsLoading: false,
                 focusItemsLoaded: true
             });
@@ -157,6 +189,62 @@ export class FocusState {
         );
     }
 
+    @Action(CreateUser)
+    createUser(ctx: StateContext<FocusStateModel>, action: CreateUser) {
+        this.matSnackBar.open("Account wird zum ersten Mal konfiguriert.");
+        return this.httpClient.post<UserInformation>(`${environment.digitServiceUrl}/api/user`, null).pipe(
+            catchError((e) => {
+                this.matSnackBar.open("Account konnte nicht konfiguriert werden.");
+                return throwError("Create user failed");
+            }),
+            tap(info => {
+                this.matSnackBar.open("Account wurde angelegt.");
+                const state = ctx.getState();
+                ctx.setState({
+                    ...state,
+                    userInformation: info
+                });
+            }));
+    }
+
+    @Action(PatchUser)
+    patchUser(ctx: StateContext<FocusStateModel>, action: PatchUser) {
+        this.matSnackBar.open("Es wird eine automatische Wartung ausgeführt.");
+        return this.httpClient.patch<UserInformation>(`${environment.digitServiceUrl}/api/user`, null).pipe(
+            catchError((e) => {
+                this.matSnackBar.open("Beim Ausführen einer automatischen Wartung kam es zu einem Fehler.");
+                return throwError("Create user failed");
+            }),
+            tap(info => {
+                this.matSnackBar.open("Es wurde eine automatische Wartung ausgeführt.");
+                const state = ctx.getState();
+                ctx.setState({
+                    ...state,
+                    userInformation: info
+                });
+            }));
+    }
+
+    @Action(LoadUser)
+    loadUser(ctx: StateContext<FocusStateModel>, action: LoadUser) {
+        return this.httpClient.get<UserInformation>(`${environment.digitServiceUrl}/api/user`)
+            .pipe(catchError((error) => {
+                if (error.status == 404) {
+                    ctx.dispatch(new CreateUser());
+                }
+                return throwError("Get user failed");
+            }), tap((info: UserInformation) => {
+                const state = ctx.getState();
+                ctx.setState({
+                    ...state,
+                    userInformation: info
+                });
+                if (!info.calendarReminderActive) {
+                    return ctx.dispatch(new PatchUser());
+                }
+            }));
+    }
+
     @Action(LoadCalendarEvents)
     async loadCalendarEvents(ctx: StateContext<FocusStateModel>, action: LoadCalendarEvents) {
         ctx.setState({
@@ -189,6 +277,28 @@ export class FocusState {
             calendarItems: unionBy(state.calendarItems, data, v => { return { feedId: v.feedId, id: v.id } }),
         });
     }
+
+    // @Action(LoadPlan)
+    // loadPlan(ctx: StateContext<FocusStateModel>, action: LoadPlan) {
+    //     const state = ctx.getState();
+    //     ctx.setState({
+    //         ...state,
+    //         planLoading: true
+    //     });
+    //     let now = new Date();
+    //     return this.digitService.getPlan(action.from, action.to).pipe(tap((items) => {
+    //         const state = ctx.getState();
+    //         ctx.setState({
+    //             ...state,
+    //             focusItems: unionBy(state.focusItems.filter(i => !(i.start < action.to && action.from < i.end )), items, i => i.id),
+    //             planLoading: false,
+    //             planLoaded: true
+    //         });
+    //     }),
+    //         tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
+    //         mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)))),
+    //     );
+    // }
 
     @Action(LoadDirections)
     async loadDirections(ctx: StateContext<FocusStateModel>, action: LoadDirections) {
@@ -233,23 +343,28 @@ export class FocusState {
         return state.focusItemsLoaded;
     }
 
+    private static mapFocusDisplay(state: FocusStateModel, item: FocusItem): FocusDisplay {
+        var isEvent = !!(item.calendarEventId && item.calendarEventFeedId);
+        var event = isEvent ? state.calendarItems.find(v => v.id == item.calendarEventId && v.feedId == item.calendarEventFeedId) : null;
+        var directions = item.directionsKey ? state.directions[item.directionsKey] : null;
+        let late = event && directions ? +directions.routes[0].arrivalTime - +event.start : null;
+        return {
+            id: item.id,
+            indicateTime: item.indicateTime,
+            isEvent: isEvent,
+            isLoading: isEvent && null == event,
+            event: event,
+            directions: directions,
+            directionsFound: !!item.directionsKey,
+            late: late
+        }
+    }
+
     @Selector()
-    static focusItems(state: FocusStateModel): FocusDisplay[] {
-        return state.focusItems.map(item => {
-            var isEvent = !!(item.calendarEventId && item.calendarEventFeedId);
-            var event = isEvent ? state.calendarItems.find(v => v.id == item.calendarEventId && v.feedId == item.calendarEventFeedId) : null;
-            var directions = item.directionsKey ? state.directions[item.directionsKey] : null;
-            let late = event && directions ? +directions.routes[0].arrivalTime - +event.start : null;
-            return {
-                id: item.id,
-                indicateTime: item.indicateTime,
-                isEvent: isEvent,
-                isLoading: isEvent && null == event,
-                event: event,
-                directions: directions,
-                directionsFound: !!item.directionsKey,
-                late: late
-            }
-        }).sort(v => (+v.indicateTime) * -1);
+    static activeFocusItems(state: FocusStateModel): FocusDisplay[] {
+        return state.focusItems
+            .filter(i => i.start < addHours(new Date(), 2) && new Date() < i.end)
+            .sort(v => (+v.indicateTime) * -1)
+            .map(item => this.mapFocusDisplay(state, item));
     }
 }

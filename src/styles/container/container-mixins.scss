@@ -1,10 +1,10 @@
 @mixin container-width() {
-  width: 90vw;
-  max-width: 60em;
+    // width: 90vw;
+    max-width: 60em;
 }
 
 @mixin container() {
-  @include container-width();
-  margin: auto;
-  padding: 16px;
+    @include container-width();
+    // margin: auto;
+    padding: 0 0.5em;
 }

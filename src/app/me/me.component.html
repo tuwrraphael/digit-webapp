@@ -1,23 +1,5 @@
 <div class="overview-container">
   <h1 class="mdc-typography--headline2">Übersicht</h1>
-  <div *ngIf="'running' == maintainance">
-    Es wird eine automatische Wartung ausgeführt.
-  </div>
-  <div *ngIf="'done' == maintainance">
-    Es wurde eine automatische Wartung ausgeführt.
-  </div>
-  <div *ngIf="'error' == maintainance">
-    Beim Ausführen einer automatischen Wartung kam es zu einem Fehler.
-  </div>
-  <div *ngIf="'running' == userCreation">
-    Account wird zum ersten Mal konfiguriert.
-  </div>
-  <div *ngIf="'done' == userCreation">
-    Account wurde angelegt.
-  </div>
-  <div *ngIf="'error' == userCreation">
-    Account konnte nicht konfiguriert werden.
-  </div>
   <section>
     <h2 class="mdc-typography--headline3">Uhr</h2>
     <div *ngFor="let device of devices; let i = index">

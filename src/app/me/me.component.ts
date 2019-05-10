@@ -9,11 +9,6 @@ import { environment } from '../../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-interface UserInformation {
-  pushChannelRegistered: string;
-  calendarReminderActive: string;
-}
-
 interface BatteryStatus {
   voltage: number;
   stateOfCharge: number;
@@ -33,28 +28,12 @@ interface DeviceStatus {
 })
 export class MeComponent implements OnInit {
   devices: DeviceStatus[];
-  userCreation: string;
-  maintainance: string = null;
-  userInfo: UserInformation;
   subscribedFeeds: number;
 
   constructor(private oauthService: OAuthService,
     private calendarService: CalendarService,
     private httpClient: HttpClient,
     private router: Router) { }
-
-  private handleError(error: HttpErrorResponse) {
-    if (error.status == 404) {
-      this.userCreation = "running";
-      this.httpClient.post(`${environment.digitServiceUrl}/api/user`, null).pipe(
-        map(data => <UserInformation>data))
-        .subscribe(info => {
-          this.userCreation = "done";
-          this.userInfo = info;
-        }, () => this.userCreation = "error");
-    }
-    return observableThrowError("Get user failed");
-  };
 
   ngOnInit() {
     this.calendarService.getConfigurations().subscribe(v => {
@@ -65,22 +44,6 @@ export class MeComponent implements OnInit {
           .reduce((a, b) => a + b);
       }
     });
-    var self = this;
-    this.httpClient.get(`${environment.digitServiceUrl}/api/user`)
-      .pipe(catchError(this.handleError.bind(self))).pipe(
-      map(data => <UserInformation>data))
-      .subscribe(userInfo => {
-        this.userInfo = userInfo;
-        if (!userInfo.calendarReminderActive) {
-          this.maintainance = "running";
-          this.httpClient.patch(`${environment.digitServiceUrl}/api/user`, null).pipe(
-            map(data => <UserInformation>data))
-            .subscribe(info => {
-              this.maintainance = "done";
-              this.userInfo = info;
-            }, () => this.maintainance = "error");
-        }
-      });
     this.httpClient.get(`${environment.digitServiceUrl}/api/device`).pipe(
       map(data => <DeviceStatus[]>data))
       .subscribe(devices => {
@@ -97,11 +60,11 @@ export class MeComponent implements OnInit {
   accessToken = null;
 
   get calendarIncomplete() {
-    return this.subscribedFeeds == 0 || (this.userInfo && !this.userInfo.calendarReminderActive);
+    return false; //this.subscribedFeeds == 0 || (this.userInfo && !this.userInfo.calendarReminderActive);
   }
 
   get appIncomplete() {
-    return this.userInfo && !this.userInfo.pushChannelRegistered;
+    return false; //this.userInfo && !this.userInfo.pushChannelRegistered;
   }
 
   get isLoggedIn() {
