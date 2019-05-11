@@ -8,33 +8,33 @@
       <div class="mdv-drawer__content">
         <nav class="mdc-list" *ngIf="isLoggedIn">
           <hr class="mdc-list-divider" />
-          <a routerLink="focus" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+          <a routerLink="focus" (click)="mobileQuery.matches && sidenav.close()" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
             Jetzt
           </a>
-          <a routerLink="planner" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+          <a routerLink="planner" (click)="mobileQuery.matches && sidenav.close()" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
               Planungsansicht
             </a>
           <hr class="mdc-list-divider" />
           <h6 class="mdc-list-group__subheader">Einstellungen</h6>
-          <a routerLink="me" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+          <a routerLink="me" (click)="mobileQuery.matches && sidenav.close()" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
             <i class="material-icons mdc-button__icon">settings</i>
             Übersicht
           </a>
-          <a routerLink="calendar/configure" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+          <a routerLink="calendar/configure" (click)="mobileQuery.matches && sidenav.close()" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
             <i class="material-icons mdc-button__icon">event</i>
             Kalender
           </a>
-          <a routerLink="notifications" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+          <a routerLink="notifications" (click)="mobileQuery.matches && sidenav.close()" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
             <i class="material-icons mdc-button__icon">notifications</i>
             Benachrichtigungen
           </a>
           <hr class="mdc-list-divider" />
           <h6 class="mdc-list-group__subheader">Tools</h6>
-          <a routerLink="/device/12345/log" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+          <a routerLink="/device/12345/log" (click)="mobileQuery.matches && sidenav.close()" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
             <i class="material-icons mdc-button__icon">list</i>
             Log
           </a>
-          <a routerLink="/calendar/view" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
+          <a routerLink="/calendar/view" (click)="mobileQuery.matches && sidenav.close()" routerLinkActive="mdc-list-item--activated" class="mdc-list-item">
             <i class="material-icons mdc-button__icon">event</i>
             Kalender-Debugger
           </a>
