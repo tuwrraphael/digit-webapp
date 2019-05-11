@@ -142,10 +142,16 @@ export class FocusState {
         let connection = new HubConnectionBuilder()
             .withUrl(`${environment.digitServiceUrl}/hubs/focus`, { accessTokenFactory: () => this.oauthService.getAccessToken() })
             .build();
-        connection.on("focusChanged", items => {
+        connection.on("focusChanged", (items : FocusItem[]) => {
+            items.forEach(element => {
+                element.indicateTime = new Date(element.indicateTime);
+                element.start = new Date(element.start);
+                element.end = new Date(element.end);
+            });
+            let now = new Date();
             ctx.setState({
                 ...ctx.getState(),
-                focusItems: items
+                focusItems: unionBy(state.focusItems.filter(i => !(i.start < addHours(now, 2) && now < i.end)), items, i => i.id)
             });
             ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })));
             ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)));
@@ -177,9 +183,10 @@ export class FocusState {
         });
         return this.digitService.patchFocus().pipe(tap((items) => {
             const state = ctx.getState();
+            let now = new Date();
             ctx.setState({
                 ...state,
-                focusItems: items,
+                focusItems: unionBy(state.focusItems.filter(i => !(i.start < addHours(now, 2) && now < i.end)), items, i => i.id),
                 focusItemsLoading: false,
                 patchedAt: new Date()
             });

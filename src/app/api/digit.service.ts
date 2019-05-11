@@ -25,6 +25,8 @@ export class DigitService {
             var items = <FocusItem[]>data;
             items.forEach(v => {
                 v.indicateTime = new Date(v.indicateTime);
+                v.start = new Date(v.start);
+                v.end = new Date(v.end);
             });
             return items;
         }));
