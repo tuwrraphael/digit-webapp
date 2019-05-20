@@ -8,9 +8,17 @@ export interface FocusItem {
     calendarEventFeedId: string;
     id: string;
     indicateTime: Date;
-    directionsKey: string;
+    directionsMetadata: DirectionsMetadata;
+}
+export interface DirectionsMetadata {
+    key: string;
+    error?: DirectionsNotFoundReason;
 }
 
+export enum DirectionsNotFoundReason {
+    AddressNotFound = 0,
+    RouteNotFound = 1
+}
 export interface FocusDisplay {
     event: EventData;
     isEvent: boolean;
@@ -18,6 +26,6 @@ export interface FocusDisplay {
     id: string;
     indicateTime: Date;
     directions: TransitDirections;
-    directionsFound: boolean;
+    directionsMetadata : DirectionsMetadata,
     late: number;
 }

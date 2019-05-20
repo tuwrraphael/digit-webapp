@@ -1,5 +1,4 @@
 <div class="notifications-container">
-  <h1 class="mdc-typography--headline2">Benachrichtigungen</h1>
   <div *ngIf="pushChannels">
     <div *ngFor="let channel of pushChannels">
       <span *ngIf="channel.id == localPushConfigId"><strong>Dieses</strong></span>

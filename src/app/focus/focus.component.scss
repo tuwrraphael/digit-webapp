@@ -11,9 +11,7 @@
         }
     }
     border-bottom: 1px solid lightgray;
-    padding-top: 1em;
-    padding-bottom: .5em;
-    margin-bottom: .5em;
+    margin-bottom: 1em;
     &__no-directions {
         color: lightgray;
         font-style: italic;
@@ -48,4 +46,20 @@
         justify-content: center;
     }
     display: flex;
+}
+
+.route-collapsed {
+    cursor: pointer;
+    &__step:not(:last-of-type) {
+        &:after {
+            content: ">";
+            
+        }
+    }
+    &__line {
+        padding: 0 0.5em;
+        font-weight: bold;
+    }
+    display: inline-flex;
+    align-items: center;
 }

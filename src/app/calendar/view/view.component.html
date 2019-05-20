@@ -1,9 +1,4 @@
 <div class="calendar-container">
-  <h1 class="mdc-typography--headline2">Kalender</h1>
-  <a [routerLink]="['../configure']" class="mdc-button mdc-button--raised">
-    <i class="material-icons mdc-button__icon">event</i>
-    Kalender konfigurieren
-  </a>
   <h2 class="mdc-typography--headline4">nächste Ereignisse</h2>
   <ul class="mdc-list mdc-list--two-line mdc-list--avatar-list">
     <li *ngIf="events && 0 === events.length">

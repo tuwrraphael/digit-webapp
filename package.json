@@ -34,6 +34,7 @@
     "@material/list": "^1.1.1",
     "@material/toolbar": "^1.1.0",
     "@material/typography": "^1.0.0",
+    "@ngxs/router-plugin": "^3.4.3",
     "@ngxs/store": "^3.4.3",
     "angular-oauth2-oidc": "^5.0.2",
     "core-js": "^2.4.1",

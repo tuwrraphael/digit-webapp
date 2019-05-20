@@ -14,30 +14,51 @@
           {{item.event.location.text}}
         </div>
       </div>
-      <div *ngIf="!item.directionsFound" class="focus-item__no-directions">
-        {{(item.event.location.text || item.event.location.address) ? "keine Routen gefunden" : "kein Zielort
-        angegeben"}}
-      </div>
-      <div class="route" *ngIf="item.directions && item.directions.routes && item.directions.routes.length">
-        <div class="route-step" *ngFor="let step of item.directions.routes[0].steps">
-          <div class="route-step__time-area">
-            <div>{{step.departureTime|date:"shortTime"}} {{step.departureStop.name}}</div>
-            <div class="route-step__line"></div>
-            <div>{{step.arrivalTime|date:"shortTime"}} {{step.arrivalStop.name}}</div>
+      <div *ngIf="item.directionsMetadata">
+        <div *ngIf="item.directionsMetadata.error === DirectionsNotFoundReason.AddressNotFound"
+          class="focus-item__no-directions">
+          Zielort {{item.event ? item.event.location.text : ''}} konnte nicht gefunden werden
+        </div>
+        <div *ngIf="item.directionsMetadata.error === DirectionsNotFoundReason.RouteNotFound"
+          class="focus-item__no-directions">
+          Es konnte keine Route zum Zielort gefunden werden
+        </div>
+        <div *ngIf="item.directions && item.directions.routes && item.directions.routes.length">
+          <div (click)="expanded[item.id] = !expanded[item.id]" class="route-collapsed">
+            <span class="route-collapsed__step"
+              *ngFor="let step of item.directions.routes[item.directionsMetadata.peferredRoute].steps; let first = first;">
+              <span class="route-collapsed__line">{{step.line.shortName}}<span
+                  *ngIf="first">({{step.departureTime|date:"shortTime"}})</span></span>
+            </span>
+            <i class="material-icons">
+              arrow_drop_down
+            </i>
           </div>
-          <div class="route-step__summary">
-            <div>mit {{step.line.shortName}} Richtung {{step.headsign}}</div>
+          <div class="route" *ngIf="expanded[item.id]">
+            <div class="route-step"
+              *ngFor="let step of item.directions.routes[item.directionsMetadata.peferredRoute].steps">
+              <div class="route-step__time-area">
+                <div>{{step.departureTime|date:"shortTime"}} {{step.departureStop.name}}</div>
+                <div class="route-step__line"></div>
+                <div>{{step.arrivalTime|date:"shortTime"}} {{step.arrivalStop.name}}</div>
+              </div>
+              <div class="route-step__summary">
+                <div>mit {{step.line.shortName}} Richtung {{step.headsign}}</div>
+              </div>
+            </div>
+            <div>Ankunft: {{item.directions.routes[0].arrivalTime | date:"shortTime"}} <span
+                *ngIf="showOffset(item)">({{item.late/1000/60|number:'1.0-0'}} Minuten
+                {{item.late > 0 ? "verspätet" : "vorher"}})</span></div>
           </div>
         </div>
-        <div>Ankunft: {{item.directions.routes[0].arrivalTime | date:"shortTime"}} <span *ngIf="showOffset(item)">({{item.late/1000/60|number:'1.0-0'}} Minuten {{item.late > 0 ? "verspätet" : "vorher"}})</span></div>
       </div>
-      
     </div>
   </div>
   <div *ngIf="!(focusItemsLoading$|async) && !((focusItems$ | async).length)">
     keine aktuellen Ereignisse
   </div>
-  <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate" *ngIf="(focusItemsLoading$|async)">
+  <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate"
+    *ngIf="(focusItemsLoading$|async)">
     <div class="mdc-linear-progress__buffering-dots"></div>
     <div class="mdc-linear-progress__buffer"></div>
     <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
@@ -47,5 +68,6 @@
       <span class="mdc-linear-progress__bar-inner"></span>
     </div>
   </div>
-  <button class="mdc-button mdc-button--raised" (click)="patchFocus()"><i class="material-icons">refresh</i>Aktualisieren</button>
+  <button class="mdc-button mdc-button--raised" (click)="patchFocus()"><i
+      class="material-icons">refresh</i>Aktualisieren</button>
 </div>

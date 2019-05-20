@@ -5,3 +5,16 @@
     left: 0;
     right: 0;
 }
+
+.mobile-nav {
+    display: flex;
+    align-items: center;
+}
+
+button#open-navidation {
+
+    &::before,
+    &::after {
+        background-color: unset;
+    }
+}

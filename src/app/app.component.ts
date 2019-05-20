@@ -3,10 +3,12 @@ import { ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { authConfig } from './auth.config';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { JwksValidationHandler } from 'angular-oauth2-oidc';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute, RouterStateSnapshot } from '@angular/router';
 import { MediaMatcher } from '@angular/cdk/layout';
-import { Store } from '@ngxs/store';
+import { Store, Select } from '@ngxs/store';
 import { LoadUser } from './states/FocusState';
+import { filter, map } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -14,13 +16,18 @@ import { LoadUser } from './states/FocusState';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnDestroy {
+  sub: Subscription;
   ngOnDestroy(): void {
     this.mobileQuery.removeListener(this._mobileQueryListener);
+    this.sub.unsubscribe();
   }
   title = 'app';
   mobileQuery: MediaQueryList;
 
   private _mobileQueryListener: () => void;
+
+  router$: Observable<any>;
+  pageTitle: string;
 
   constructor(
     private oauthService: OAuthService, private router: Router,
@@ -43,6 +50,14 @@ export class AppComponent implements OnDestroy {
     if (this.oauthService.hasValidAccessToken()) {
       this.store.dispatch(new LoadUser());
     }
+    this.router$ = this.store.select(state => state.router);
+    this.sub = this.router$.subscribe(s => {
+      if (s.state && s.state.root) {
+        var route = s.state.root;
+        while (route.firstChild) route = route.firstChild;
+        this.pageTitle = route.data.title
+      }
+    });
   }
 
   mobileQueryListener(ev: MediaQueryListEvent) {

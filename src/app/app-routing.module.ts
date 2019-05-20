@@ -6,6 +6,7 @@ import { AuthGuard } from './auth-guard';
 import { LoginComponent } from './login/login.component';
 import { FocusComponent } from './focus/focus.component';
 import { PlannerComponent } from './planner/planner.component';
+import { AccountDebuggerComponent } from './account-debugger/account-debugger.component';
 
 
 const routes: Routes = [
@@ -17,12 +18,26 @@ const routes: Routes = [
   {
     path: 'me',
     component: MeComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {
+      title: "Einstellungen: Übersicht"
+    }
+  },
+  {
+    path: 'account-debugger',
+    component: AccountDebuggerComponent,
+    canActivate: [AuthGuard],
+    data: {
+      title: "Account-Debugger"
+    }
   },
   {
     path: 'notifications',
     component: NotificationsComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {
+      title: "Benachrichtigungseinstellungen"
+    }
   },
   {
     path: 'login',
@@ -31,12 +46,18 @@ const routes: Routes = [
   {
     path: 'focus',
     component: FocusComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {
+      title: "Jetzt"
+    }
   },
   {
     path: 'planner',
     component: PlannerComponent,
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: {
+      title: "Planungsansicht"
+    }
   },
   {
     path: "**",

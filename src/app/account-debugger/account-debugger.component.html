@@ -1,0 +1,27 @@
+<section>
+    <table class="overview-table">
+      <tbody>
+        <tr>
+          <td>User ID</td>
+          <td>{{userId}}</td>
+        </tr>
+        <tr>
+          <td>Accesstoken</td>
+          <td class="overview-table__token-cell">
+            {{accessToken}}
+            <button *ngIf="!accessToken" class="mdc-button" (click)="showAccessToken()">
+              Accesstoken zeigen
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="accessToken">
+          <td>Scopes</td>
+          <td>{{scopes}}</td>
+        </tr>
+        <tr *ngIf="accessToken">
+          <td>Expiration</td>
+          <td>{{expiration | date:'mediumTime'  }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>

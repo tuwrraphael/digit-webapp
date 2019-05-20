@@ -30,6 +30,8 @@ import { TravelService } from './api/travel.service';
 import { PlannerComponent } from './planner/planner.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatSidenavModule, MatSnackBarModule} from '@angular/material';
+import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
+import { AccountDebuggerComponent } from './account-debugger/account-debugger.component';
 
 
 @NgModule({
@@ -39,7 +41,8 @@ import {MatSidenavModule, MatSnackBarModule} from '@angular/material';
     MeComponent,
     NotificationsComponent,
     FocusComponent,
-    PlannerComponent
+    PlannerComponent,
+    AccountDebuggerComponent
   ],
   imports: [
     DeviceModule,
@@ -55,6 +58,7 @@ import {MatSidenavModule, MatSnackBarModule} from '@angular/material';
     NgxsModule.forRoot([
       FocusState
     ]),
+    NgxsRouterPluginModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'de' },

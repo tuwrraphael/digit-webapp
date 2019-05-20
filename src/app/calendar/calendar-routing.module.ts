@@ -6,8 +6,18 @@ import { ViewComponent } from './view/view.component';
 
 const routes: Routes = [{
   path: "calendar", children: [
-    { path: "configure", component: ConfigureComponent },
-    { path: "view", component: ViewComponent }
+    {
+      path: "configure", component: ConfigureComponent,
+      data: {
+        title: "Kalendereinstellungen"
+      }
+    },
+    {
+      path: "view", component: ViewComponent,
+      data: {
+        title: "Kalender-Debugger"
+      }
+    }
   ], canActivate: [AuthGuard]
 }];
 

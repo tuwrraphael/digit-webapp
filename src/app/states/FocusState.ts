@@ -129,7 +129,7 @@ export class FocusState {
             });
         }),
             tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
-            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)))),
+            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata && null != v.directionsMetadata.key ).map(v => v.directionsMetadata.key)))),
         );
     }
 
@@ -154,7 +154,8 @@ export class FocusState {
                 focusItems: unionBy(state.focusItems.filter(i => !(i.start < addHours(now, 2) && now < i.end)), items, i => i.id)
             });
             ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })));
-            ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)));
+            ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata &&
+                null != v.directionsMetadata.key).map(v => v.directionsMetadata.key)));
         });
         connection.start();
     }
@@ -192,7 +193,8 @@ export class FocusState {
             });
         }),
             tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
-            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)))),
+            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata &&
+                null != v.directionsMetadata.key).map(v => v.directionsMetadata.key)))),
         );
     }
 
@@ -353,7 +355,7 @@ export class FocusState {
     private static mapFocusDisplay(state: FocusStateModel, item: FocusItem): FocusDisplay {
         var isEvent = !!(item.calendarEventId && item.calendarEventFeedId);
         var event = isEvent ? state.calendarItems.find(v => v.id == item.calendarEventId && v.feedId == item.calendarEventFeedId) : null;
-        var directions = item.directionsKey ? state.directions[item.directionsKey] : null;
+        var directions = item.directionsMetadata && item.directionsMetadata.key ? state.directions[item.directionsMetadata.key] : null;
         let late = event && directions ? +directions.routes[0].arrivalTime - +event.start : null;
         return {
             id: item.id,
@@ -362,7 +364,7 @@ export class FocusState {
             isLoading: isEvent && null == event,
             event: event,
             directions: directions,
-            directionsFound: !!item.directionsKey,
+            directionsMetadata: item.directionsMetadata,
             late: late
         }
     }

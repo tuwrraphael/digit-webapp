@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FocusDisplay, FocusItem } from '../model/FocusItem';
+import { FocusDisplay, FocusItem, DirectionsNotFoundReason } from '../model/FocusItem';
 import { Store, Select } from '@ngxs/store';
 import { LoadFocus, FocusState, PatchFocus, ConnectFocusHub, DisconnectFocusHub } from '../states/FocusState';
 import { Observable, Subscription } from 'rxjs';
@@ -13,6 +13,10 @@ export class FocusComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store.dispatch(new DisconnectFocusHub());
   }
+
+  DirectionsNotFoundReason = DirectionsNotFoundReason;
+
+  expanded = {};
 
   @Select(FocusState.activeFocusItems) focusItems$: Observable<FocusDisplay[]>;
   @Select(FocusState.focusItemsLoading) focusItemsLoading$: Observable<boolean>;
