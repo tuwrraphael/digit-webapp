@@ -13,7 +13,8 @@ import { environment } from '../../environments/environment';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { addHours } from 'date-fns';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import {MatSnackBar, MatSortModule} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
 
 export class LoadFocus {
     static readonly type = "[Focus] Load";

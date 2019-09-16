@@ -29,7 +29,8 @@ import { FocusState } from './states/FocusState';
 import { TravelService } from './api/travel.service';
 import { PlannerComponent } from './planner/planner.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatSidenavModule, MatSnackBarModule} from '@angular/material';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { AccountDebuggerComponent } from './account-debugger/account-debugger.component';
 
