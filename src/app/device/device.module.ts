@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 import { DeviceRoutingModule } from './device-routing.module';
 import { LogComponent } from './log/log.component';
@@ -10,7 +10,7 @@ import { LogComponent } from './log/log.component';
   imports: [
     CommonModule,
     DeviceRoutingModule,
-    HttpModule
+    HttpClientModule
   ],
   declarations: [LogComponent]
 })
