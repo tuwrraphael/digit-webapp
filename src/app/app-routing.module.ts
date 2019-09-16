@@ -7,6 +7,8 @@ import { LoginComponent } from './login/login.component';
 import { FocusComponent } from './focus/focus.component';
 import { PlannerComponent } from './planner/planner.component';
 import { AccountDebuggerComponent } from './account-debugger/account-debugger.component';
+import { FocusItemDebugComponent } from './focus-item-debug/focus-item-debug.component';
+import { FocusItemLocationComponent } from './focus-item-location/focus-item-location.component';
 
 
 const routes: Routes = [
@@ -58,6 +60,14 @@ const routes: Routes = [
     data: {
       title: "Planungsansicht"
     }
+  },
+  {
+    path: 'focus-item-debug',
+    component: FocusItemDebugComponent,
+  },
+  {
+    path: 'focus/:id/location',
+    component: FocusItemLocationComponent,
   },
   {
     path: "**",

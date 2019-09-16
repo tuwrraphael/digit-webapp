@@ -13,6 +13,7 @@ export interface FocusItem {
 export interface DirectionsMetadata {
     key: string;
     error?: DirectionsNotFoundReason;
+    peferredRoute : number;
 }
 
 export enum DirectionsNotFoundReason {
@@ -28,4 +29,11 @@ export interface FocusDisplay {
     directions: TransitDirections;
     directionsMetadata : DirectionsMetadata,
     late: number;
+    backgroundColor: string;
+    foregroundColor : string;
+}
+
+export interface Plan {
+    getUp : Date;
+    focusItems: FocusItem[];
 }

@@ -5,6 +5,12 @@ export interface EventData {
   end: Date;
   id:string;
   feedId:string;
+  category : EventCategory;
+}
+export interface EventCategory {
+  name:string;
+  foreground:string;
+  background:string;
 }
 export interface LocationData {
   text: string;

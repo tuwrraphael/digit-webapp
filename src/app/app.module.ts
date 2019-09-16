@@ -29,9 +29,12 @@ import { FocusState } from './states/FocusState';
 import { TravelService } from './api/travel.service';
 import { PlannerComponent } from './planner/planner.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatSidenavModule, MatSnackBarModule} from '@angular/material';
+import {MatSidenavModule, MatSnackBarModule, MatMenuModule} from '@angular/material';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { AccountDebuggerComponent } from './account-debugger/account-debugger.component';
+import { FocusItemComponent } from './focus-item/focus-item.component';
+import { FocusItemDebugComponent } from './focus-item-debug/focus-item-debug.component';
+import { FocusItemLocationComponent } from './focus-item-location/focus-item-location.component';
 
 
 @NgModule({
@@ -42,7 +45,10 @@ import { AccountDebuggerComponent } from './account-debugger/account-debugger.co
     NotificationsComponent,
     FocusComponent,
     PlannerComponent,
-    AccountDebuggerComponent
+    AccountDebuggerComponent,
+    FocusItemComponent,
+    FocusItemDebugComponent,
+    FocusItemLocationComponent
   ],
   imports: [
     DeviceModule,
@@ -52,6 +58,7 @@ import { AccountDebuggerComponent } from './account-debugger/account-debugger.co
     HttpClientModule,
     BrowserAnimationsModule,
     MatSidenavModule,
+    MatMenuModule,
     MatSnackBarModule,
     OAuthModule.forRoot(),
     CommonModule,

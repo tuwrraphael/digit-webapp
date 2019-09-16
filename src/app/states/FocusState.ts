@@ -11,9 +11,9 @@ import { TransitDirections } from '../model/TransitDirections';
 import { HubConnectionBuilder, HubConnection } from '@aspnet/signalr';
 import { environment } from '../../environments/environment';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { addHours } from 'date-fns';
+import { addHours, startOfTomorrow, endOfTomorrow, startOfToday } from 'date-fns';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import {MatSnackBar, MatSortModule} from '@angular/material';
+import { MatSnackBar, MatSortModule } from '@angular/material';
 
 export class LoadFocus {
     static readonly type = "[Focus] Load";
@@ -88,6 +88,7 @@ export interface FocusStateModel {
     };
     hubConnection: HubConnection;
     userInformation: UserInformation;
+    planLoading: boolean;
 }
 
 @State<FocusStateModel>({
@@ -102,7 +103,8 @@ export interface FocusStateModel {
         calendarEventsLoading: false,
         patchedAt: null,
         hubConnection: null,
-        userInformation: null
+        userInformation: null,
+        planLoading: false
     }
 })
 export class FocusState {
@@ -129,7 +131,7 @@ export class FocusState {
             });
         }),
             tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
-            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata && null != v.directionsMetadata.key ).map(v => v.directionsMetadata.key)))),
+            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata && null != v.directionsMetadata.key).map(v => v.directionsMetadata.key)))),
         );
     }
 
@@ -142,7 +144,7 @@ export class FocusState {
         let connection = new HubConnectionBuilder()
             .withUrl(`${environment.digitServiceUrl}/hubs/focus`, { accessTokenFactory: () => this.oauthService.getAccessToken() })
             .build();
-        connection.on("focusChanged", (items : FocusItem[]) => {
+        connection.on("focusChanged", (items: FocusItem[]) => {
             items.forEach(element => {
                 element.indicateTime = new Date(element.indicateTime);
                 element.start = new Date(element.start);
@@ -287,27 +289,26 @@ export class FocusState {
         });
     }
 
-    // @Action(LoadPlan)
-    // loadPlan(ctx: StateContext<FocusStateModel>, action: LoadPlan) {
-    //     const state = ctx.getState();
-    //     ctx.setState({
-    //         ...state,
-    //         planLoading: true
-    //     });
-    //     let now = new Date();
-    //     return this.digitService.getPlan(action.from, action.to).pipe(tap((items) => {
-    //         const state = ctx.getState();
-    //         ctx.setState({
-    //             ...state,
-    //             focusItems: unionBy(state.focusItems.filter(i => !(i.start < action.to && action.from < i.end )), items, i => i.id),
-    //             planLoading: false,
-    //             planLoaded: true
-    //         });
-    //     }),
-    //         tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
-    //         mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsKey).map(v => v.directionsKey)))),
-    //     );
-    // }
+    @Action(LoadPlan)
+    loadPlan(ctx: StateContext<FocusStateModel>, action: LoadPlan) {
+        const state = ctx.getState();
+        ctx.setState({
+            ...state,
+            planLoading: true
+        });
+        return this.digitService.getPlan(action.from, action.to).pipe(tap((plan) => {
+            const state = ctx.getState();
+            ctx.setState({
+                ...state,
+                focusItems: unionBy(state.focusItems.filter(i => !(i.start < action.to && action.from < i.end)), plan.focusItems, i => i.id),
+                planLoading: false,
+            });
+        }),
+            tap((plan) => ctx.dispatch(new LoadCalendarEvents(plan.focusItems.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
+            mergeMap((plan) => ctx.dispatch(new LoadDirections(plan.focusItems.filter(v => null != v.directionsMetadata &&
+                null != v.directionsMetadata.key).map(v => v.directionsMetadata.key)))),
+        );
+    }
 
     @Action(LoadDirections)
     async loadDirections(ctx: StateContext<FocusStateModel>, action: LoadDirections) {
@@ -365,8 +366,31 @@ export class FocusState {
             event: event,
             directions: directions,
             directionsMetadata: item.directionsMetadata,
-            late: late
+            late: late,
+            backgroundColor: event && event.category ? event.category.background : "lightgray",
+            foregroundColor: event && event.category ? this.getContrasting(event.category.background) : "black"
         }
+    }
+
+    static hexToRgb(hex: string) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
+    }
+
+    static getContrasting(hex: string) {
+        let rgb = this.hexToRgb(hex);
+        if (null == rgb) {
+            return "black";
+        }
+        var o = Math.round(((rgb.r * 299) +
+            (rgb.g * 587) +
+            (rgb.b * 114)) / 1000);
+        var fore = (o > 125) ? 'black' : 'white';
+        return fore;
     }
 
     @Selector()
@@ -374,6 +398,14 @@ export class FocusState {
         return state.focusItems
             .filter(i => i.start < addHours(new Date(), 2) && new Date() < i.end)
             .sort(v => (+v.indicateTime) * -1)
+            .map(item => this.mapFocusDisplay(state, item));
+    }
+
+    @Selector()
+    static planerItems(state: FocusStateModel): FocusDisplay[] {
+        return state.focusItems
+            .filter(i => i.start < endOfTomorrow() && startOfToday() < i.end)
+            .sort(v => (+v.start))
             .map(item => this.mapFocusDisplay(state, item));
     }
 }

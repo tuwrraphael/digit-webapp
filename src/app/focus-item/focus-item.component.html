@@ -1,0 +1,76 @@
+<div class="focus-item" [style.border-color]="item.backgroundColor">
+  <div class="calendar-event" [style.background-color]="item.backgroundColor" [style.color]="item.foregroundColor">
+    <h1 class="calendar-event__subject">
+      {{item.event?.subject}}
+    </h1>
+    <h2 class="calendar-event__time">
+      {{item.event?.start|date:"shortTime"}} bis {{item.event?.end | date:"shortTime"}}
+    </h2>
+    <h2 class="calendar-event__location">
+      <i class="material-icons">
+        place
+      </i>
+      <span class="calendar-event__location-text">
+        {{item.event?.location?.text}}
+      </span>
+    </h2>
+    <div *ngIf="hasRoute()" class="calendar-event__route" (click)="expanded = !expanded">
+      <i class="material-icons">
+        directions_transit
+      </i>
+      <span class="route-collapsed" class="calendar-event__route-text">
+        <span class="route-collapsed__step"
+          *ngFor="let step of item.directions.routes[item.directionsMetadata.peferredRoute].steps; let first = first;">
+          <span class="route-collapsed__line">{{step.line.shortName}}<span
+              *ngIf="first">({{step.departureTime|date:"shortTime"}})</span></span>
+        </span>
+      </span>
+    </div>
+  </div>
+  <ul class="focus-item-messages">
+    <li *ngIf="item.directionsMetadata && item.directionsMetadata.error === DirectionsNotFoundReason.AddressNotFound">
+      <i class="material-icons">
+        warning
+      </i>
+      <span>
+        Zielort {{item.event ? item.event.location.text : ''}} konnte nicht gefunden werden (<a
+          [routerLink]="['/focus', item.id, 'location']">anderen Ort wählen</a>)
+      </span>
+    </li>
+    <li *ngIf="item.directionsMetadata && item.directionsMetadata.error === DirectionsNotFoundReason.RouteNotFound">
+      <i class="material-icons">
+        warning
+      </i>
+      <span>
+        Es konnte keine Route zum Zielort gefunden werden (<a [routerLink]="['/focus', item.id, 'location']">anderen Ort
+          wählen</a>)
+      </span>
+    </li>
+  </ul>
+  <div class="route" *ngIf="hasRoute() && expanded">
+    <div class="route-step" *ngFor="let step of item.directions.routes[item.directionsMetadata.peferredRoute].steps">
+      <div class="route-step__time-area">
+        <div>{{step.departureTime|date:"shortTime"}} {{step.departureStop.name}}</div>
+        <div class="route-step__line"></div>
+        <div>{{step.arrivalTime|date:"shortTime"}} {{step.arrivalStop.name}}</div>
+      </div>
+      <div class="route-step__summary">
+        <div>mit {{step.line.shortName}} Richtung {{step.headsign}}</div>
+      </div>
+    </div>
+    <div>Ankunft: {{item.directions.routes[0].arrivalTime | date:"shortTime"}} <span
+        *ngIf="showOffset(item)">({{item.late/1000/60|number:'1.0-0'}} Minuten
+        {{item.late > 0 ? "verspätet" : "vorher"}})</span>
+    </div>
+  </div>
+  <div class="focus-item-actions">
+    <mat-menu #focusItemMenu="matMenu">
+      <button mat-menu-item [routerLink]="['/focus', item.id, 'location']">anderen Ort
+        wählen</button>
+      <button mat-menu-item>wird nicht wahrgenommen</button>
+    </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="focusItemMenu" class="mdc-icon-button">
+      <i class="material-icons mdc-icon-button__icon">more_vert</i>
+    </button>
+  </div>
+</div>

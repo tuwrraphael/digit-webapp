@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
-import { LoadCalendarView, FocusState } from '../states/FocusState';
+import { FocusState, LoadPlan } from '../states/FocusState';
 import {startOfToday, endOfTomorrow} from "date-fns";
 import { Observable } from 'rxjs';
-import { EventData } from '../calendar/model/event';
+import { FocusDisplay } from '../model/FocusItem';
 
 @Component({
   selector: 'app-planner',
@@ -15,7 +15,9 @@ export class PlannerComponent implements OnInit {
   constructor(private store : Store) { }
 
   ngOnInit() {
-    this.store.dispatch(new LoadCalendarView(startOfToday(), endOfTomorrow()));
+    this.store.dispatch(new LoadPlan(startOfToday(), endOfTomorrow()));
   }
+
+  @Select(FocusState.planerItems) plannerItems$: Observable<FocusDisplay[]>;
 
 }
