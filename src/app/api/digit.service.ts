@@ -9,26 +9,28 @@ import { map } from 'rxjs/operators';
 export class DigitService {
 
     constructor(private httpClient: HttpClient) { }
+    private convert(v: FocusItem) {
+        v.indicateTime = new Date(v.indicateTime);
+        v.start = new Date(v.start);
+        v.end = new Date(v.end);
+        return v;
+    }
+    getFocusItem(id: string) {
+        return this.httpClient.get<FocusItem>(`${environment.digitServiceUrl}/api/me/focus/${id}`).pipe(map(data => {
+            this.convert(data);
+            return data;
+        }));
+    }
     getFocus() {
         return this.httpClient.get<FocusItem[]>(`${environment.digitServiceUrl}/api/me/focus`).pipe(map(data => {
-            var items = <FocusItem[]>data;
-            items.forEach(v => {
-                v.indicateTime = new Date(v.indicateTime);
-                v.start = new Date(v.start);
-                v.end = new Date(v.end);
-            });
-            return items;
+            data.forEach(this.convert);
+            return data;
         }));
     }
     patchFocus() {
         return this.httpClient.patch<FocusItem[]>(`${environment.digitServiceUrl}/api/me/focus`, {}).pipe(map(data => {
-            var items = <FocusItem[]>data;
-            items.forEach(v => {
-                v.indicateTime = new Date(v.indicateTime);
-                v.start = new Date(v.start);
-                v.end = new Date(v.end);
-            });
-            return items;
+            data.forEach(this.convert);
+            return data;
         }));
     }
 }

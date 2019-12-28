@@ -1,6 +1,6 @@
-import { State, Action, StateContext, Selector } from '@ngxs/store';
+import { State, Action, StateContext, Selector, Select, createSelector } from '@ngxs/store';
 import { tap, mergeMap, catchError, map } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, OperatorFunction, pipe } from 'rxjs';
 import { DigitService } from '../api/digit.service';
 import { FocusItem, FocusDisplay } from '../model/FocusItem';
 import { CalendarService } from '../calendar/api/calendar.service';
@@ -19,6 +19,11 @@ import { MatSortModule } from '@angular/material/sort';
 export class LoadFocus {
     static readonly type = "[Focus] Load";
     constructor() { }
+}
+
+export class LoadFocusItem {
+    static readonly type = "[Focus] Load Item";
+    constructor(public id: string) { }
 }
 
 export class ConnectFocusHub {
@@ -112,6 +117,22 @@ export class FocusState {
         private httpClient: HttpClient,
         private matSnackBar: MatSnackBar) { }
 
+
+    loadCalendarForFocusItems(items: FocusItem[], ctx: StateContext<FocusStateModel>) {
+        return ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })));
+    }
+
+    loadDirectionsForFocusItems(items: FocusItem[], ctx: StateContext<FocusStateModel>) {
+        return ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata && null != v.directionsMetadata.key).map(v => v.directionsMetadata.key)));
+    }
+
+    loadCalendarAndDirections(ctx) {
+        return pipe(
+            tap<FocusItem[]>(items => this.loadCalendarForFocusItems(items, ctx)),
+            mergeMap((items) => this.loadDirectionsForFocusItems(items, ctx))
+        );
+    }
+
     @Action(LoadFocus)
     loadFocus(ctx: StateContext<FocusStateModel>, action: LoadFocus) {
         const state = ctx.getState();
@@ -129,8 +150,20 @@ export class FocusState {
                 focusItemsLoaded: true
             });
         }),
-            tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
-            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata && null != v.directionsMetadata.key ).map(v => v.directionsMetadata.key)))),
+            this.loadCalendarAndDirections(ctx));
+    }
+
+    @Action(LoadFocusItem)
+    loadFocusItem(ctx: StateContext<FocusStateModel>, action: LoadFocusItem) {
+        return this.digitService.getFocusItem(action.id).pipe(tap((item) => {
+            const state = ctx.getState();
+            ctx.setState({
+                ...state,
+                focusItems: unionBy(state.focusItems, [item], i => i.id)
+            });
+        }),
+            map(item => [item]),
+            this.loadCalendarAndDirections(ctx)
         );
     }
 
@@ -143,20 +176,18 @@ export class FocusState {
         let connection = new HubConnectionBuilder()
             .withUrl(`${environment.digitServiceUrl}/hubs/focus`, { accessTokenFactory: () => this.oauthService.getAccessToken() })
             .build();
-        connection.on("focusChanged", (items : FocusItem[]) => {
+        connection.on("focusChanged", (items: FocusItem[]) => {
             items.forEach(element => {
                 element.indicateTime = new Date(element.indicateTime);
                 element.start = new Date(element.start);
                 element.end = new Date(element.end);
             });
-            let now = new Date();
             ctx.setState({
                 ...ctx.getState(),
-                focusItems: unionBy(state.focusItems.filter(i => !(i.start < addHours(now, 2) && now < i.end)), items, i => i.id)
+                focusItems: unionBy(state.focusItems, items, i => i.id)
             });
-            ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })));
-            ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata &&
-                null != v.directionsMetadata.key).map(v => v.directionsMetadata.key)));
+            this.loadCalendarForFocusItems(items, ctx);
+            this.loadDirectionsForFocusItems(items, ctx);
         });
         connection.start();
     }
@@ -185,17 +216,14 @@ export class FocusState {
         });
         return this.digitService.patchFocus().pipe(tap((items) => {
             const state = ctx.getState();
-            let now = new Date();
             ctx.setState({
                 ...state,
-                focusItems: unionBy(state.focusItems.filter(i => !(i.start < addHours(now, 2) && now < i.end)), items, i => i.id),
+                focusItems: unionBy(state.focusItems, items, i => i.id),
                 focusItemsLoading: false,
                 patchedAt: new Date()
             });
         }),
-            tap((items) => ctx.dispatch(new LoadCalendarEvents(items.map(v => { return { feedId: v.calendarEventFeedId, eventId: v.calendarEventId }; })))),
-            mergeMap((items) => ctx.dispatch(new LoadDirections(items.filter(v => null != v.directionsMetadata &&
-                null != v.directionsMetadata.key).map(v => v.directionsMetadata.key)))),
+            this.loadCalendarAndDirections(ctx)
         );
     }
 
@@ -329,7 +357,6 @@ export class FocusState {
             }
         }
         const state = ctx.getState();
-        console.log(directions);
         ctx.setState({
             ...state,
             directions: {
@@ -377,4 +404,11 @@ export class FocusState {
             .sort(v => (+v.indicateTime) * -1)
             .map(item => this.mapFocusDisplay(state, item));
     }
+
+    static focusItem(id: string) {
+        return createSelector([FocusState], (state: FocusStateModel) => {
+            return this.mapFocusDisplay(state, state.focusItems
+                .find(i => i.id === id));
+        });
+      }
 }

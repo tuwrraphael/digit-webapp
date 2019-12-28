@@ -7,6 +7,7 @@ import { LoginComponent } from './login/login.component';
 import { FocusComponent } from './focus/focus.component';
 import { PlannerComponent } from './planner/planner.component';
 import { AccountDebuggerComponent } from './account-debugger/account-debugger.component';
+import { FocusItemFixRouteComponent } from './focus-item-fix-route/focus-item-fix-route.component';
 
 
 const routes: Routes = [
@@ -49,7 +50,11 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: {
       title: "Jetzt"
-    }
+    },
+  },
+  {
+    path: "focus/:id/fix-route",
+    component: FocusItemFixRouteComponent
   },
   {
     path: 'planner',

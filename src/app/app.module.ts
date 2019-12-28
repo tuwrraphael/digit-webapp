@@ -33,6 +33,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NgxsRouterPluginModule } from '@ngxs/router-plugin';
 import { AccountDebuggerComponent } from './account-debugger/account-debugger.component';
+import { FocusItemFixRouteComponent } from './focus-item-fix-route/focus-item-fix-route.component';
+import { NavigationState } from './states/NavigationState';
 
 
 @NgModule({
@@ -43,7 +45,8 @@ import { AccountDebuggerComponent } from './account-debugger/account-debugger.co
     NotificationsComponent,
     FocusComponent,
     PlannerComponent,
-    AccountDebuggerComponent
+    AccountDebuggerComponent,
+    FocusItemFixRouteComponent
   ],
   imports: [
     DeviceModule,
@@ -57,7 +60,8 @@ import { AccountDebuggerComponent } from './account-debugger/account-debugger.co
     OAuthModule.forRoot(),
     CommonModule,
     NgxsModule.forRoot([
-      FocusState
+      FocusState,
+      NavigationState
     ]),
     NgxsRouterPluginModule.forRoot(),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })

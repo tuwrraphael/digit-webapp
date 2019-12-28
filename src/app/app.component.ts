@@ -61,7 +61,7 @@ export class AppComponent implements OnDestroy {
   }
 
   mobileQueryListener(ev: MediaQueryListEvent) {
-    console.log(ev);
+    
   }
 
   logout() {

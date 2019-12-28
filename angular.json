@@ -94,6 +94,12 @@
             "azure": {
               "browserTarget": "digit-webapp:build:azure"
             }
+          },
+          "sourceMap": {
+            "scripts": true,
+            "styles": true,
+            "hidden": true,
+            "vendor": true
           }
         },
         "extract-i18n": {

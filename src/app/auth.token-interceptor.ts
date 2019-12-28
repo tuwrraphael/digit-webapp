@@ -13,7 +13,6 @@ import { environment } from '../environments/environment';
 export class TokenInterceptor implements HttpInterceptor {
   constructor(public oauthService: OAuthService) { }
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    console.log(request.url);
     if ((request.url.startsWith(environment.calendarServiceUrl) ||
       request.url.startsWith(environment.digitServiceUrl) ||
       request.url.startsWith(environment.travelServiceUrl) ||
